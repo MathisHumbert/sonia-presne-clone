@@ -1,0 +1,27 @@
+block variables 
+
+doctype html 
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport" content="width=device-width, initial-scale=1.0")
+
+    base(href="/")
+
+    title=""
+
+    //- description for google
+    meta(name="")
+
+    //- website icon
+    <link rel="icon" type="image/svg+xml" href="/">
+
+    link(href="main.css" rel="stylesheet")
+
+  body(class=isDesktop ? 'desktop' : isTablet ? 'tablet' : isPhone ? 'phone' : '')
+    //- inclues ./layouts/
+
+    .content#content(data-template=template)
+      block content
+
+    script(src='main.js')

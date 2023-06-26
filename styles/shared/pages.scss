@@ -1,0 +1,7 @@
+%page {
+  @extend %cover;
+}
+
+%page__wrapper {
+  will-change: transform;
+}
