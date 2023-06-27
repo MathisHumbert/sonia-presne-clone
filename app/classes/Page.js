@@ -1,5 +1,6 @@
 import { gsap } from 'gsap';
 import Prefix from 'prefix';
+import normalizeWheel from 'normalize-wheel';
 import each from 'lodash/each';
 
 import detection from 'classes/Detection';
@@ -87,11 +88,14 @@ export default class Page {
     }
 
     this.animationIn.call(() => {
+      this.addEventListeners();
       this.isVisible = true;
     });
   }
 
   hide() {
+    this.destroy();
+
     this.isVisible = false;
 
     return new Promise((res) => {
@@ -103,18 +107,25 @@ export default class Page {
   }
 
   /**
+   * Destroy.
+   */
+  destroy() {
+    this.removeEventListeners();
+  }
+
+  /**
    * Events.
    */
   onResize() {
-    this.scroll = {
-      position: 0,
-      current: 0,
-      target: 0,
-      limit: 0,
-      last: 0,
-      velocity: 0,
-      ease: 0.05,
-    };
+    // this.scroll = {
+    //   position: 0,
+    //   current: 0,
+    //   target: 0,
+    //   limit: 0,
+    //   last: 0,
+    //   velocity: 0,
+    //   ease: 0.05,
+    // };
 
     if (this.elements.wrapper) {
       this.scroll.limit =
@@ -192,4 +203,11 @@ export default class Page {
 
     this.scroll.last = this.scroll.current;
   }
+
+  /**
+   * Listeners.
+   */
+  addEventListeners() {}
+
+  removeEventListeners() {}
 }

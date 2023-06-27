@@ -57,6 +57,7 @@ export default class Canvas {
       viewport: this.viewport,
       screen: this.screen,
       geometry: this.geometry,
+      forceResize: () => this.onResize(),
     });
   }
 
@@ -152,6 +153,30 @@ export default class Canvas {
 
     if (this.about && this.about.onResize) {
       this.about.onResize({ viewport: this.viewport, screen: this.screen });
+    }
+  }
+
+  onTouchDown(event) {
+    if (this.home && this.home.onTouchDown) {
+      this.home.onTouchDown(event);
+    }
+  }
+
+  onTouchMove(event) {
+    if (this.home && this.home.onTouchMove) {
+      this.home.onTouchMove(event);
+    }
+  }
+
+  onTouchUp(event) {
+    if (this.home && this.home.onTouchUp) {
+      this.home.onTouchUp(event);
+    }
+  }
+
+  onWheel(event) {
+    if (this.home && this.home.onWheel) {
+      this.home.onWheel(event);
     }
   }
 

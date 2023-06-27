@@ -55,17 +55,15 @@ class App {
   onPreloaded() {
     this.onResize();
 
-    this.canvas.onPreloaded();
-
     this.page.show();
+    this.canvas.onPreloaded();
   }
 
   onLoaded() {
     this.onResize();
 
-    this.canvas.onLoaded(this.template);
-
     this.page.show();
+    this.canvas.onLoaded(this.template);
   }
 
   onPopState() {
@@ -126,11 +124,19 @@ class App {
     if (this.page && this.page.onTouchDown) {
       this.page.onTouchDown(event);
     }
+
+    if (this.canvas && this.canvas.onTouchDown) {
+      this.canvas.onTouchDown(event);
+    }
   }
 
   onTouchMove(event) {
     if (this.page && this.page.onTouchMove) {
       this.page.onTouchMove(event);
+    }
+
+    if (this.canvas && this.canvas.onTouchMove) {
+      this.canvas.onTouchMove(event);
     }
   }
 
@@ -138,11 +144,19 @@ class App {
     if (this.page && this.page.onTouchUp) {
       this.page.onTouchUp(event);
     }
+
+    if (this.canvas && this.canvas.onTouchUp) {
+      this.canvas.onTouchUp(event);
+    }
   }
 
   onWheel(event) {
     if (this.page && this.page.onWheel) {
       this.page.onWheel(event);
+    }
+
+    if (this.canvas && this.canvas.onWheel) {
+      this.canvas.onWheel(event);
     }
   }
 
