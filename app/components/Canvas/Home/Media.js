@@ -5,7 +5,7 @@ import vertex from 'shaders/vertex.glsl';
 import fragment from 'shaders/fragment.glsl';
 
 export default class Media {
-  constructor({ element, index, scene, viewport, screen, geometry, isMain }) {
+  constructor({ element, index, scene, viewport, screen, geometry }) {
     this.element = element;
     this.index = index;
     this.scene = scene;
@@ -13,9 +13,7 @@ export default class Media {
     this.screen = screen;
     this.geometry = geometry;
 
-    this.imageElement = element.querySelector('img');
-
-    this.isAnimating = false;
+    this.scroll = 0;
 
     this.createTexture();
     this.createMaterial();
@@ -26,11 +24,11 @@ export default class Media {
    * Create.
    */
   createTexture() {
-    const textureLoader = new THREE.TextureLoader();
+    this.imageElement = this.element.querySelector('img');
 
-    textureLoader.load(this.imageElement.getAttribute('src'), (texture) => {
-      this.material.uniforms.uTexture.value = texture;
-    });
+    const src = this.imageElement.getAttribute('src');
+
+    this.texture = window.TEXTURES[src];
   }
 
   createMaterial() {
@@ -38,9 +36,9 @@ export default class Media {
       fragmentShader: fragment,
       vertexShader: vertex,
       transparent: true,
-      // wireframe: true,
+      wireframe: true,
       uniforms: {
-        uTexture: { value: null },
+        uTexture: { value: this.texture },
         uImageSizes: {
           value: new THREE.Vector2(
             this.imageElement.naturalWidth,
@@ -60,16 +58,11 @@ export default class Media {
   }
 
   createBounds() {
-    this.bounds = this.element.getBoundingClientRect();
+    this.getBounds();
 
     this.updateScale();
     this.updateX();
     this.updateY();
-
-    this.material.uniforms.uPlaneSizes.value = new THREE.Vector2(
-      this.mesh.scale.x,
-      this.mesh.scale.y
-    );
   }
 
   /**
@@ -80,6 +73,11 @@ export default class Media {
       (this.viewport.width * this.bounds.width) / this.screen.width;
     this.mesh.scale.y =
       (this.viewport.height * this.bounds.height) / this.screen.height;
+
+    this.material.uniforms.uPlaneSizes.value = new THREE.Vector2(
+      this.mesh.scale.x,
+      this.mesh.scale.y
+    );
   }
 
   updateX(x = 0) {
@@ -119,12 +117,92 @@ export default class Media {
     this.createBounds();
   }
 
-  onPlaceChange({ viewport, screen, onComplete }) {
-    this.viewport = viewport;
-    this.screen = screen;
+  showAll() {
+    this.getBounds();
 
-    this.isAnimating = true;
+    const tl = gsap.timeline({
+      duration: 1,
+      ease: 'linear',
+    });
 
+    const scaleX =
+      (this.viewport.width * this.bounds.width) / this.screen.width;
+    const scaleY =
+      (this.viewport.height * this.bounds.height) / this.screen.height;
+
+    tl.to(
+      [this.mesh.scale, this.material.uniforms.uPlaneSizes.value],
+      {
+        x: scaleX,
+        y: scaleY,
+      },
+      0
+    ).to(
+      this.mesh.position,
+      {
+        x:
+          -(this.viewport.width / 2) +
+          scaleX / 2 +
+          ((this.bounds.left - this.scroll) / this.screen.width) *
+            this.viewport.width,
+        y:
+          this.viewport.height / 2 -
+          scaleY / 2 -
+          ((this.bounds.top - 0) / this.screen.height) * this.viewport.height,
+      },
+      0
+    );
+  }
+
+  showMain(tempScale) {
+    this.getBounds();
+
+    const tl = gsap.timeline({
+      duration: 1,
+      ease: 'linear',
+    });
+
+    const scaleX =
+      (this.viewport.width * this.bounds.width) / this.screen.width;
+    const scaleY =
+      (this.viewport.height * this.bounds.height) / this.screen.height;
+
+    tl.to(
+      [this.mesh.scale, this.material.uniforms.uPlaneSizes.value],
+      {
+        x: tempScale ? tempScale.x : scaleX,
+        y: tempScale ? tempScale.y : scaleY,
+      },
+      0
+    ).to(
+      this.mesh.position,
+      {
+        x:
+          -(this.viewport.width / 2) +
+          scaleX / 2 +
+          ((this.bounds.left - this.scroll) / this.screen.width) *
+            this.viewport.width,
+        y:
+          this.viewport.height / 2 -
+          scaleY / 2 -
+          ((this.bounds.top - 0) / this.screen.height) * this.viewport.height,
+      },
+      0
+    );
+
+    if (tempScale !== undefined) {
+      tl.set(
+        [this.mesh.scale, this.material.uniforms.uPlaneSizes.value],
+        {
+          x: scaleX,
+          y: scaleY,
+        },
+        0
+      );
+    }
+  }
+
+  getBounds() {
     const rect = this.element.getBoundingClientRect();
 
     this.bounds = {
@@ -133,38 +211,14 @@ export default class Media {
       width: rect.width,
       height: rect.height,
     };
-
-    gsap.set(this.mesh.scale, {
-      x: (this.viewport.width * this.bounds.width) / this.screen.width,
-      y: (this.viewport.height * this.bounds.height) / this.screen.height,
-    });
-
-    gsap.to(this.mesh.position, {
-      x:
-        -(this.viewport.width / 2) +
-        this.mesh.scale.x / 2 +
-        ((this.bounds.left - 0) / this.screen.width) * this.viewport.width,
-      y:
-        this.viewport.height / 2 -
-        this.mesh.scale.y / 2 -
-        ((this.bounds.top - 0) / this.screen.height) * this.viewport.height,
-      duration: 1,
-      delay: 0.5,
-      onComplete: () => {
-        // pass it higher i think
-        this.isAnimating = false;
-        onComplete();
-      },
-    });
   }
 
   /**
    * Loop.
    */
   update({ scroll, velocity }) {
-    if (this.isAnimating) return;
-
     this.scroll = scroll;
+
     this.updateX(scroll);
   }
 }

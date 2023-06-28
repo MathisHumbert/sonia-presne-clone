@@ -57,7 +57,6 @@ export default class Canvas {
       viewport: this.viewport,
       screen: this.screen,
       geometry: this.geometry,
-      forceResize: () => this.onResize(),
     });
   }
 

@@ -25,6 +25,9 @@
   will-change: width, height, margin-right;
 }
 
+.home__gallery__item__wrapper {
+}
+
 .home__gallery__media__wrapper {
   display: block;
   width: 100%;
@@ -42,7 +45,7 @@
   @extend %cover;
 
   object-fit: cover;
-  opacity: 0;
+  opacity: 1;
 }
 
 .home__gallery__title {

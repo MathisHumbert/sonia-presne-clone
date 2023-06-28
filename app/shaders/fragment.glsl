@@ -18,8 +18,9 @@ vec2 getCorrectUv (vec2 planeSizes, vec2 imageSizes, vec2 uv){
 }
 
 void main(){
-  vec4 texture = texture2D(uTexture, vUv);
+  vec2 uv = getCorrectUv(uPlaneSizes, uImageSizes, vUv);
+  vec4 texture = texture2D(uTexture, uv);
 
   gl_FragColor = texture;
-  // gl_FragColor = vec4(0., 0., 0., 1.0);
+  gl_FragColor = vec4(0., 0., 0., 1.0);
 }

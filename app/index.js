@@ -3,7 +3,7 @@ import each from 'lodash/each';
 import Home from 'pages/Home';
 import About from 'pages/About';
 import Canvas from 'components/Canvas';
-
+import Preloader from 'components/Preloader';
 class App {
   constructor() {
     this.createContent();
@@ -42,11 +42,13 @@ class App {
   }
 
   createPreloader() {
-    this.onPreloaded();
+    this.preloader = new Preloader();
+
+    this.preloader.preload(this.content, this.onPreloaded.bind(this));
   }
 
   createLoader() {
-    this.onLoaded();
+    this.preloader.load(this.content, this.onLoaded.bind(this));
   }
 
   /**
