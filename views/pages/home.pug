@@ -7,14 +7,13 @@ block content
   .home
     .home__wrapper#wrapper
       .home__gallery
-        .home__gallery__wrapper
-          each item in home.data.body[0].items
-            .home__gallery__item(data-brand=item.brand data-title=item.title data-main=`${item.main}`)
-              a.home__gallery__category(href="#")=item.category 
-              a.home__gallery__media__wrapper(href="#")
-                media.home__gallery__media(data-main=`${item.main}`)
-                  img(src=item.image.url, alt="").home__gallery__media__img
-              a.home__gallery__title(href="#")=item.title 
+        each item in home.data.body[0].items
+          .home__gallery__item(data-brand=item.brand data-title=item.title data-main=`${item.main}`)
+            a.home__gallery__category(href="#")=item.category 
+            a.home__gallery__media__wrapper(href="#")
+              media.home__gallery__media(data-main=`${item.main}`)
+                img(src=item.image.url, alt="").home__gallery__media__img
+            a.home__gallery__title(href="#")=item.title 
       .home__footer
         .home__footer__view
           button.home__footer__view__button

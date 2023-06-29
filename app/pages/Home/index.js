@@ -17,25 +17,25 @@ export default class Home extends Page {
     this.view = 'main';
   }
 
-  show() {
-    each(this.elements.items, (item) => {
-      if (item.getAttribute('data-main') === 'true') {
-        gsap.set(item, {
-          width: '42vh',
-          height: '60vh',
-          marginRight: '33vh',
-        });
-      } else {
-        gsap.set(item, {
-          width: 0,
-          height: '60vh',
-          marginRight: 0,
-        });
-      }
-    });
+  // show() {
+  //   each(this.elements.items, (item) => {
+  //     if (item.getAttribute('data-main') === 'true') {
+  //       gsap.set(item, {
+  //         width: '42vh',
+  //         height: '60vh',
+  //         marginRight: '33vh',
+  //       });
+  //     } else {
+  //       gsap.set(item, {
+  //         width: 0,
+  //         height: '60vh',
+  //         marginRight: 0,
+  //       });
+  //     }
+  //   });
 
-    super.show();
-  }
+  //   super.show();
+  // }
 
   /**
    * Listeners.

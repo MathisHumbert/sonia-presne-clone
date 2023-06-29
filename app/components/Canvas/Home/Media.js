@@ -117,6 +117,50 @@ export default class Media {
     this.createBounds();
   }
 
+  changeSize({ scroll }) {
+    const rect = this.element.getBoundingClientRect();
+
+    this.bounds = {
+      top: rect.top,
+      left: rect.left + scroll,
+      width: rect.width,
+      height: rect.height,
+    };
+
+    const tl = gsap.timeline({
+      duration: 1,
+      ease: 'linear',
+    });
+
+    const scaleX =
+      (this.viewport.width * this.bounds.width) / this.screen.width;
+    const scaleY =
+      (this.viewport.height * this.bounds.height) / this.screen.height;
+
+    tl.to(
+      [this.mesh.scale, this.material.uniforms.uPlaneSizes.value],
+      {
+        x: scaleX,
+        y: scaleY,
+      },
+      0
+    ).to(
+      this.mesh.position,
+      {
+        x:
+          -(this.viewport.width / 2) +
+          scaleX / 2 +
+          ((this.bounds.left - scroll) / this.screen.width) *
+            this.viewport.width,
+        y:
+          this.viewport.height / 2 -
+          scaleY / 2 -
+          ((this.bounds.top - 0) / this.screen.height) * this.viewport.height,
+      },
+      0
+    );
+  }
+
   showAll() {
     this.getBounds();
 

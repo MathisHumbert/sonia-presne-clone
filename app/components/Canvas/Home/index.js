@@ -1,9 +1,10 @@
 import { gsap } from 'gsap';
 import normalizeWheel from 'normalize-wheel';
 import Prefix from 'prefix';
-import { map, each } from 'lodash';
+import { map, each, filter } from 'lodash';
 
 import Media from './Media';
+import GalleryDom from '../../GalleryDom';
 
 export default class Home {
   constructor({ scene, viewport, screen, geometry }) {
@@ -20,7 +21,9 @@ export default class Home {
       '.home__gallery__item'
     );
     this.mediaElements = document.querySelectorAll('.home__gallery__media');
-    this.buttonElement = document.querySelector('.home__footer__view__button');
+    this.buttonViewElement = document.querySelector(
+      '.home__footer__view__button'
+    );
 
     this.scroll = {
       position: 0,
@@ -41,6 +44,7 @@ export default class Home {
     this.transformPrefix = Prefix('transform');
 
     this.createGallery();
+    this.createDomGallery();
 
     this.onResize({ viewport, screen });
     this.show();
@@ -65,6 +69,24 @@ export default class Home {
     });
   }
 
+  createDomGallery() {
+    this.galleryItems = map(
+      this.galleryItemElements,
+      (element, index) =>
+        new GalleryDom({
+          element,
+          index,
+          screen: this.screen,
+          media: this.medias[index],
+        })
+    );
+
+    this.galleryItemsFiltered = filter(
+      this.galleryItems,
+      (item) => item.isMain === true
+    );
+  }
+
   /**
    * Animations.
    */
@@ -87,11 +109,39 @@ export default class Home {
     this.viewport = viewport;
     this.screen = screen;
 
-    this.scroll.limit = this.galleryWrapperElement.clientWidth - this.itemWidth;
+    this.mainGalleryItemSizes = {
+      width: this.screen.height * 0.42,
+      margin: this.screen.height * 0.33,
+    };
+
+    this.allGalleryItemSizes = {
+      width: this.screen.height * 0.42 * 0.7,
+      margin: this.screen.height * 0.126,
+    };
+
+    if (this.view === 'main') {
+      this.scroll.limit =
+        (this.galleryItemsFiltered.length - 1) *
+        (this.mainGalleryItemSizes.width + this.mainGalleryItemSizes.margin);
+    } else {
+      this.scroll.limit =
+        (this.galleryItemsFiltered.length - 1) *
+        (this.allGalleryItemSizes.width + this.allGalleryItemSizes.margin);
+    }
 
     this.clamp = gsap.utils.clamp(0, this.scroll.limit);
 
-    if (this.isAnimating) return;
+    each(this.galleryItemsFiltered, (galleryItem, index) => {
+      if (galleryItem && galleryItem.onResize) {
+        galleryItem.onResize({
+          screen,
+          mainGalleryItemSizes: this.mainGalleryItemSizes,
+          allGalleryItemSizes: this.allGalleryItemSizes,
+          view: this.view,
+          index,
+        });
+      }
+    });
 
     each(this.medias, (media) => {
       if (media && media.onResize) {
@@ -129,119 +179,66 @@ export default class Home {
     this.scroll.target += pixelY;
   }
 
-  onFilterClick() {
-    // this.isAnimating = true;
+  onViewClick() {
+    this.isAnimating = true;
 
     if (this.view === 'main') {
       this.onShowAll();
     } else {
       this.onShowMain();
     }
-
-    return;
-
-    each(this.galleryItemElements, (item, index) => {
-      const media = this.medias[index];
-      let tempScale = undefined;
-
-      if (this.view === 'main' && item.getAttribute('data-main') !== 'true') {
-        gsap.set(item, {
-          width: '42vh',
-          height: '60vh',
-          marginRight: '33vh',
-        });
-
-        media.mesh.scale.x =
-          (media.viewport.width * media.bounds.width) / media.screen.width;
-        media.mesh.scale.y =
-          (media.viewport.height * media.bounds.height) / media.screen.height;
-      }
-
-      if (this.view === 'all' && item.getAttribute('data-main') !== 'true') {
-        gsap.set(item, {
-          width: '42vh',
-          height: '60vh',
-          marginRight: '33vh',
-        });
-
-        tempScale = {
-          x: (media.viewport.width * media.bounds.width) / media.screen.width,
-          y:
-            (media.viewport.height * media.bounds.height) / media.screen.height,
-        };
-
-        gsap.set(item, { width: 0, marginRight: 0 });
-      } else {
-        gsap.set(item, {
-          width: '42vh',
-          height: '60vh',
-          marginRight: '33vh',
-        });
-      }
-
-      if (this.view === 'main') {
-        gsap.set(item, {
-          width: '29.4vh',
-          height: '42vh',
-          marginRight: 'calc(29.4vh / 2)',
-        });
-
-        media.showAll();
-      } else {
-        media.showMain(tempScale);
-      }
-    });
-
-    if (this.view === 'main') {
-      // this.itemWidth = this.screen.height * 0.441;
-
-      // const oldScrollLimit = this.scroll.limit;
-
-      // this.scroll.limit =
-      //   this.galleryWrapperElement.clientWidth - this.itemWidth;
-      // console.log(this.scroll.current);
-      // console.log(oldScrollLimit - this.scroll.limit);
-
-      gsap.delayedCall(1, () => {
-        this.onFilterClickEnd('all');
-      });
-    } else {
-      gsap.delayedCall(1, () => {
-        this.onFilterClickEnd('main');
-      });
-    }
   }
 
   onShowMain() {
-    console.log('onshowmain');
-    each(this.galleryItemElements, (item, index) => {
-      const media = this.medias[index];
-      const isMain = item.getAttribute('data-main') === 'true';
+    const startWidth =
+      this.mainGalleryItemSizes.width +
+      this.mainGalleryItemSizes.margin -
+      this.mainGalleryItemSizes.width / 2;
+
+    const endWidth =
+      this.allGalleryItemSizes.width +
+      this.allGalleryItemSizes.margin -
+      this.allGalleryItemSizes.width / 2;
+
+    this.scroll.current = this.scroll.target =
+      this.scroll.current * (startWidth / endWidth);
+
+    each(this.galleryItemsFiltered, (element, index) => {
+      element.changeSizeFromAllToMain({
+        scroll: this.scroll.current,
+        lastMainIndex: this.galleryItemsFiltered.length - 1,
+        index,
+      });
+    });
+
+    gsap.delayedCall(1, () => {
+      this.onFilterClickEnd('main');
     });
   }
 
   onShowAll() {
-    each(this.galleryItemElements, (item, index) => {
-      const media = this.medias[index];
-      const isMain = item.getAttribute('data-main') === 'true';
+    const startWidth =
+      this.mainGalleryItemSizes.width +
+      this.mainGalleryItemSizes.margin -
+      this.mainGalleryItemSizes.width / 2;
 
-      if (!isMain) {
-        // gsap.set(item, {
-        //   width: '42vh',
-        //   height: '60vh',
-        //   marginRight: '33vh',
-        // });
-        // media.mesh.scale.x =
-        //   (media.viewport.width * media.bounds.width) / media.screen.width;
-        // media.mesh.scale.y =
-        //   (media.viewport.height * media.bounds.height) / media.screen.height;
-      }
+    const endWidth =
+      this.allGalleryItemSizes.width +
+      this.allGalleryItemSizes.margin -
+      this.allGalleryItemSizes.width / 2;
 
-      gsap.to(item, {
-        width: '29.4vh',
-        height: '42vh',
-        marginRight: 'calc(29.4vh / 2)',
+    this.scroll.current = this.scroll.target =
+      this.scroll.current * (endWidth / startWidth);
+
+    each(this.galleryItemsFiltered, (element, index) => {
+      element.changeSizeFromMainToAll({
+        scroll: this.scroll.current,
+        index,
       });
+    });
+
+    gsap.delayedCall(0.5, () => {
+      this.onFilterClickEnd('all');
     });
   }
 
@@ -250,11 +247,24 @@ export default class Home {
 
     this.view = newView;
 
+    if (this.view === 'main') {
+      this.scroll.limit =
+        (this.galleryItemsFiltered.length - 1) *
+        (this.mainGalleryItemSizes.width + this.mainGalleryItemSizes.margin);
+    } else {
+      this.scroll.limit =
+        (this.galleryItemsFiltered.length - 1) *
+        (this.allGalleryItemSizes.width + this.allGalleryItemSizes.margin);
+    }
+
     this.clamp = gsap.utils.clamp(0, this.scroll.limit);
   }
 
   addEventListeners() {
-    this.buttonElement.addEventListener('click', this.onFilterClick.bind(this));
+    this.buttonViewElement.addEventListener(
+      'click',
+      this.onViewClick.bind(this)
+    );
   }
 
   /**
@@ -277,10 +287,6 @@ export default class Home {
       this.scroll.current = 0;
     }
 
-    this.galleryElement.style[
-      this.transformPrefix
-    ] = `translateX(-${this.scroll.current}px)`;
-
     this.scroll.velocity = (this.scroll.current - this.scroll.last) * 0.05;
 
     this.scroll.last = this.scroll.current;
@@ -290,6 +296,14 @@ export default class Home {
         media.update({
           scroll: this.scroll.current,
           velocity: this.scroll.velocity,
+        });
+      }
+    });
+
+    each(this.galleryItemsFiltered, (galleryItem) => {
+      if (galleryItem && galleryItem.update) {
+        galleryItem.update({
+          scroll: this.scroll.current,
         });
       }
     });
