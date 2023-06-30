@@ -5,13 +5,14 @@ import vertex from 'shaders/vertex.glsl';
 import fragment from 'shaders/fragment.glsl';
 
 export default class Media {
-  constructor({ element, index, scene, viewport, screen, geometry }) {
+  constructor({ element, index, scene, viewport, screen, geometry, isMain }) {
     this.element = element;
     this.index = index;
     this.scene = scene;
     this.viewport = viewport;
     this.screen = screen;
     this.geometry = geometry;
+    this.isMain = isMain;
 
     this.scroll = 0;
 
@@ -58,7 +59,14 @@ export default class Media {
   }
 
   createBounds() {
-    this.getBounds();
+    const rect = this.element.getBoundingClientRect();
+
+    this.bounds = {
+      top: rect.top,
+      left: rect.left + this.scroll,
+      width: rect.width,
+      height: rect.height,
+    };
 
     this.updateScale();
     this.updateX();
@@ -98,7 +106,9 @@ export default class Media {
    * Animations.
    */
   show() {
+    // if (this.isMain) {
     gsap.fromTo(this.material.uniforms.uAlpha, { value: 0 }, { value: 1 });
+    // }
   }
 
   hide() {
@@ -117,7 +127,7 @@ export default class Media {
     this.createBounds();
   }
 
-  changeSize({ scroll }) {
+  changeSize({ scroll, uAlpha }) {
     const rect = this.element.getBoundingClientRect();
 
     this.bounds = {
@@ -144,117 +154,57 @@ export default class Media {
         y: scaleY,
       },
       0
-    ).to(
-      this.mesh.position,
-      {
-        x:
-          -(this.viewport.width / 2) +
-          scaleX / 2 +
-          ((this.bounds.left - scroll) / this.screen.width) *
-            this.viewport.width,
-        y:
-          this.viewport.height / 2 -
-          scaleY / 2 -
-          ((this.bounds.top - 0) / this.screen.height) * this.viewport.height,
-      },
-      0
-    );
-  }
-
-  showAll() {
-    this.getBounds();
-
-    const tl = gsap.timeline({
-      duration: 1,
-      ease: 'linear',
-    });
-
-    const scaleX =
-      (this.viewport.width * this.bounds.width) / this.screen.width;
-    const scaleY =
-      (this.viewport.height * this.bounds.height) / this.screen.height;
-
-    tl.to(
-      [this.mesh.scale, this.material.uniforms.uPlaneSizes.value],
-      {
-        x: scaleX,
-        y: scaleY,
-      },
-      0
-    ).to(
-      this.mesh.position,
-      {
-        x:
-          -(this.viewport.width / 2) +
-          scaleX / 2 +
-          ((this.bounds.left - this.scroll) / this.screen.width) *
-            this.viewport.width,
-        y:
-          this.viewport.height / 2 -
-          scaleY / 2 -
-          ((this.bounds.top - 0) / this.screen.height) * this.viewport.height,
-      },
-      0
-    );
-  }
-
-  showMain(tempScale) {
-    this.getBounds();
-
-    const tl = gsap.timeline({
-      duration: 1,
-      ease: 'linear',
-    });
-
-    const scaleX =
-      (this.viewport.width * this.bounds.width) / this.screen.width;
-    const scaleY =
-      (this.viewport.height * this.bounds.height) / this.screen.height;
-
-    tl.to(
-      [this.mesh.scale, this.material.uniforms.uPlaneSizes.value],
-      {
-        x: tempScale ? tempScale.x : scaleX,
-        y: tempScale ? tempScale.y : scaleY,
-      },
-      0
-    ).to(
-      this.mesh.position,
-      {
-        x:
-          -(this.viewport.width / 2) +
-          scaleX / 2 +
-          ((this.bounds.left - this.scroll) / this.screen.width) *
-            this.viewport.width,
-        y:
-          this.viewport.height / 2 -
-          scaleY / 2 -
-          ((this.bounds.top - 0) / this.screen.height) * this.viewport.height,
-      },
-      0
-    );
-
-    if (tempScale !== undefined) {
-      tl.set(
-        [this.mesh.scale, this.material.uniforms.uPlaneSizes.value],
+    )
+      .to(
+        this.mesh.position,
         {
-          x: scaleX,
-          y: scaleY,
+          x:
+            -(this.viewport.width / 2) +
+            scaleX / 2 +
+            ((this.bounds.left - scroll) / this.screen.width) *
+              this.viewport.width,
+          y:
+            this.viewport.height / 2 -
+            scaleY / 2 -
+            ((this.bounds.top - 0) / this.screen.height) * this.viewport.height,
         },
         0
-      );
-    }
+      )
+      .to(this.material.uniforms.uAlpha, { value: uAlpha }, 0);
   }
 
-  getBounds() {
+  setSize({ scroll, uAlpha }) {
     const rect = this.element.getBoundingClientRect();
 
     this.bounds = {
       top: rect.top,
-      left: rect.left + this.scroll,
+      left: rect.left + scroll,
       width: rect.width,
       height: rect.height,
     };
+
+    const scaleX =
+      (this.viewport.width * this.bounds.width) / this.screen.width;
+    const scaleY =
+      (this.viewport.height * this.bounds.height) / this.screen.height;
+
+    gsap.set([this.mesh.scale, this.material.uniforms.uPlaneSizes.value], {
+      x: scaleX,
+      y: scaleY,
+    });
+
+    gsap.set(this.mesh.position, {
+      x:
+        -(this.viewport.width / 2) +
+        scaleX / 2 +
+        ((this.bounds.left - scroll) / this.screen.width) * this.viewport.width,
+      y:
+        this.viewport.height / 2 -
+        scaleY / 2 -
+        ((this.bounds.top - 0) / this.screen.height) * this.viewport.height,
+    });
+
+    gsap.set(this.material.uniforms.uAlpha, { value: uAlpha });
   }
 
   /**

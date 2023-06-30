@@ -3,6 +3,8 @@ precision mediump float;
 uniform sampler2D uTexture;
 uniform vec2 uPlaneSizes;
 uniform vec2 uImageSizes;
+uniform float uAlpha;
+
 varying vec2 vUv;
 
 vec2 getCorrectUv (vec2 planeSizes, vec2 imageSizes, vec2 uv){
@@ -21,6 +23,6 @@ void main(){
   vec2 uv = getCorrectUv(uPlaneSizes, uImageSizes, vUv);
   vec4 texture = texture2D(uTexture, uv);
 
-  gl_FragColor = texture;
-  gl_FragColor = vec4(0., 0., 0., 1.0);
+  // gl_FragColor = vec4(texture.rgb, uAlpha);
+  gl_FragColor = vec4(0., 0., 0., uAlpha);
 }

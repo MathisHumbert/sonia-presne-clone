@@ -4,7 +4,7 @@ import Prefix from 'prefix';
 import { map, each, filter } from 'lodash';
 
 import Media from './Media';
-import GalleryDom from '../../GalleryDom';
+import MediaDom from './MediaDom';
 
 export default class Home {
   constructor({ scene, viewport, screen, geometry }) {
@@ -52,38 +52,38 @@ export default class Home {
     this.addEventListeners();
   }
 
-  createGallery() {
-    this.medias = [];
-
-    each(this.mediaElements, (element, index) => {
-      const media = new Media({
-        element,
-        index,
-        scene: this.scene,
-        viewport: this.viewport,
-        screen: this.screen,
-        geometry: this.geometry,
-      });
-
-      this.medias.push(media);
-    });
-  }
-
   createDomGallery() {
-    this.galleryItems = map(
+    this.mediaElements = map(
       this.galleryItemElements,
       (element, index) =>
-        new GalleryDom({
+        new MediaDom({
           element,
-          index,
           screen: this.screen,
           media: this.medias[index],
         })
     );
 
-    this.galleryItemsFiltered = filter(
-      this.galleryItems,
+    this.mediaElementsFiltered = filter(
+      this.mediaElements,
       (item) => item.isMain === true
+    );
+  }
+
+  createGallery() {
+    this.medias = map(
+      this.mediaElements,
+      (element, index) =>
+        new Media({
+          element,
+          index,
+          scene: this.scene,
+          viewport: this.viewport,
+          screen: this.screen,
+          geometry: this.geometry,
+          isMain:
+            this.galleryItemElements[index].getAttribute('data-main') ===
+            'true',
+        })
     );
   }
 
@@ -91,15 +91,19 @@ export default class Home {
    * Animations.
    */
   show() {
-    if (this.media && this.media.show) {
-      this.media.show();
-    }
+    each(this.medias, (media) => {
+      if (media && media.show) {
+        media.show();
+      }
+    });
   }
 
   hide() {
-    if (this.media && this.media.hide) {
-      this.media.hide();
-    }
+    each(this.medias, (media) => {
+      if (media && media.hide) {
+        media.hide();
+      }
+    });
   }
 
   /**
@@ -109,34 +113,34 @@ export default class Home {
     this.viewport = viewport;
     this.screen = screen;
 
-    this.mainGalleryItemSizes = {
+    this.mainMediaElementSizes = {
       width: this.screen.height * 0.42,
       margin: this.screen.height * 0.33,
     };
 
-    this.allGalleryItemSizes = {
+    this.allMediaElementSizes = {
       width: this.screen.height * 0.42 * 0.7,
       margin: this.screen.height * 0.126,
     };
 
     if (this.view === 'main') {
       this.scroll.limit =
-        (this.galleryItemsFiltered.length - 1) *
-        (this.mainGalleryItemSizes.width + this.mainGalleryItemSizes.margin);
+        (this.mediaElementsFiltered.length - 1) *
+        (this.mainMediaElementSizes.width + this.mainMediaElementSizes.margin);
     } else {
       this.scroll.limit =
-        (this.galleryItemsFiltered.length - 1) *
-        (this.allGalleryItemSizes.width + this.allGalleryItemSizes.margin);
+        (this.mediaElementsFiltered.length - 1) *
+        (this.allMediaElementSizes.width + this.allMediaElementSizes.margin);
     }
 
     this.clamp = gsap.utils.clamp(0, this.scroll.limit);
 
-    each(this.galleryItemsFiltered, (galleryItem, index) => {
-      if (galleryItem && galleryItem.onResize) {
-        galleryItem.onResize({
+    each(this.mediaElementsFiltered, (medialElement, index) => {
+      if (medialElement && medialElement.onResize) {
+        medialElement.onResize({
           screen,
-          mainGalleryItemSizes: this.mainGalleryItemSizes,
-          allGalleryItemSizes: this.allGalleryItemSizes,
+          mainMediaElementSizes: this.mainMediaElementSizes,
+          allMediaElementSizes: this.allMediaElementSizes,
           view: this.view,
           index,
         });
@@ -154,6 +158,8 @@ export default class Home {
   }
 
   onTouchDown(event) {
+    if (this.isAnimating) return;
+
     this.isDown = true;
 
     this.scroll.position = this.scroll.current;
@@ -161,7 +167,7 @@ export default class Home {
   }
 
   onTouchMove(event) {
-    if (!this.isDown) return;
+    if (!this.isDown || this.isAnimating) return;
 
     const x = event.touches ? event.touches[0].clientX : event.clientX;
     const distance = this.start - x;
@@ -170,44 +176,68 @@ export default class Home {
   }
 
   onTouchUp() {
+    if (this.isAnimating) return;
+
     this.isDown = false;
   }
 
   onWheel(event) {
+    if (this.isAnimating) return;
+
     const { pixelY } = normalizeWheel(event);
 
     this.scroll.target += pixelY;
   }
 
   onViewClick() {
+    if (this.isAnimating) return;
+
     this.isAnimating = true;
 
     if (this.view === 'main') {
       this.onShowAll();
+      this.buttonViewElement.classList.add(
+        'home__footer__view__button--active'
+      );
     } else {
       this.onShowMain();
+      this.buttonViewElement.classList.remove(
+        'home__footer__view__button--active'
+      );
     }
   }
 
   onShowMain() {
+    this.mediaElementsFiltered = filter(
+      this.mediaElements,
+      (item) => item.isMain === true
+    );
+
     const startWidth =
-      this.mainGalleryItemSizes.width +
-      this.mainGalleryItemSizes.margin -
-      this.mainGalleryItemSizes.width / 2;
+      (this.allMediaElementSizes.width +
+        this.allMediaElementSizes.margin -
+        this.allMediaElementSizes.width / 2) *
+      this.mediaElementsFiltered.length;
 
     const endWidth =
-      this.allGalleryItemSizes.width +
-      this.allGalleryItemSizes.margin -
-      this.allGalleryItemSizes.width / 2;
+      (this.mainMediaElementSizes.width +
+        this.mainMediaElementSizes.margin -
+        this.mainMediaElementSizes.width / 2) *
+      (this.mediaElementsFiltered.length - 1);
 
     this.scroll.current = this.scroll.target =
-      this.scroll.current * (startWidth / endWidth);
+      this.scroll.current * (endWidth / startWidth);
 
-    each(this.galleryItemsFiltered, (element, index) => {
+    const endX =
+      -this.scroll.current +
+      (this.mainMediaElementSizes.width + this.mainMediaElementSizes.margin) *
+        (this.mediaElementsFiltered.length - 1) -
+      this.mainMediaElementSizes.width / 2;
+
+    each(this.mediaElements, (element) => {
       element.changeSizeFromAllToMain({
         scroll: this.scroll.current,
-        lastMainIndex: this.galleryItemsFiltered.length - 1,
-        index,
+        endX,
       });
     });
 
@@ -217,47 +247,59 @@ export default class Home {
   }
 
   onShowAll() {
+    const startX =
+      -this.scroll.current +
+      (this.mainMediaElementSizes.width + this.mainMediaElementSizes.margin) *
+        (this.mediaElementsFiltered.length - 1) -
+      this.mainMediaElementSizes.width / 2;
+
     const startWidth =
-      this.mainGalleryItemSizes.width +
-      this.mainGalleryItemSizes.margin -
-      this.mainGalleryItemSizes.width / 2;
+      (this.mainMediaElementSizes.width +
+        this.mainMediaElementSizes.margin -
+        this.mainMediaElementSizes.width / 2) *
+      (this.mediaElementsFiltered.length - 1);
 
     const endWidth =
-      this.allGalleryItemSizes.width +
-      this.allGalleryItemSizes.margin -
-      this.allGalleryItemSizes.width / 2;
+      (this.allMediaElementSizes.width +
+        this.allMediaElementSizes.margin -
+        this.allMediaElementSizes.width / 2) *
+      this.mediaElementsFiltered.length;
 
     this.scroll.current = this.scroll.target =
       this.scroll.current * (endWidth / startWidth);
 
-    each(this.galleryItemsFiltered, (element, index) => {
+    this.mediaElementsFiltered = this.mediaElements;
+
+    each(this.mediaElementsFiltered, (element, index) => {
       element.changeSizeFromMainToAll({
         scroll: this.scroll.current,
+        startX,
+        allMediaElementSizes: this.allMediaElementSizes,
         index,
       });
     });
 
-    gsap.delayedCall(0.5, () => {
+    gsap.delayedCall(1, () => {
       this.onFilterClickEnd('all');
     });
   }
 
   onFilterClickEnd(newView) {
-    this.isAnimating = false;
-
     this.view = newView;
 
     if (this.view === 'main') {
       this.scroll.limit =
-        (this.galleryItemsFiltered.length - 1) *
-        (this.mainGalleryItemSizes.width + this.mainGalleryItemSizes.margin);
+        (this.mediaElementsFiltered.length - 1) *
+        (this.mainMediaElementSizes.width + this.mainMediaElementSizes.margin);
     } else {
       this.scroll.limit =
-        (this.galleryItemsFiltered.length - 1) *
-        (this.allGalleryItemSizes.width + this.allGalleryItemSizes.margin);
+        (this.mediaElementsFiltered.length - 1) *
+        (this.allMediaElementSizes.width + this.allMediaElementSizes.margin);
     }
 
     this.clamp = gsap.utils.clamp(0, this.scroll.limit);
+
+    this.isAnimating = false;
   }
 
   addEventListeners() {
@@ -300,9 +342,9 @@ export default class Home {
       }
     });
 
-    each(this.galleryItemsFiltered, (galleryItem) => {
-      if (galleryItem && galleryItem.update) {
-        galleryItem.update({
+    each(this.mediaElementsFiltered, (mediaElement) => {
+      if (mediaElement && mediaElement.update) {
+        mediaElement.update({
           scroll: this.scroll.current,
         });
       }
@@ -318,11 +360,3 @@ export default class Home {
     }
   }
 }
-
-// TODO
-// autoAlpha form 0 to 1 if is not display
-// only change width and margin from 0 to vh
-// change height from current to next
-// block click if is animating
-// update limit on click start
-// block scroll on isAnimating

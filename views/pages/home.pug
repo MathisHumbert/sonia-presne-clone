@@ -8,7 +8,7 @@ block content
     .home__wrapper#wrapper
       .home__gallery
         each item in home.data.body[0].items
-          .home__gallery__item(data-brand=item.brand data-title=item.title data-main=`${item.main}`)
+          .home__gallery__item(data-brand=item.brand data-title=item.title data-main=`${item.main}` data-main-index=`${item.main_index}`)
             a.home__gallery__category(href="#")=item.category 
             a.home__gallery__media__wrapper(href="#")
               media.home__gallery__media(data-main=`${item.main}`)
