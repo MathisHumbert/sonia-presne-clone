@@ -13,10 +13,6 @@ export default class Home {
     this.screen = screen;
     this.geometry = geometry;
 
-    this.galleryElement = document.querySelector('.home__gallery');
-    this.galleryWrapperElement = document.querySelector(
-      '.home__gallery__wrapper'
-    );
     this.galleryItemElements = document.querySelectorAll(
       '.home__gallery__item'
     );
@@ -24,6 +20,16 @@ export default class Home {
     this.buttonViewElement = document.querySelector(
       '.home__footer__view__button'
     );
+    this.counterCurrentElement = document.querySelector(
+      '.home__footer__counter__current'
+    );
+    this.counterTotalElement = document.querySelector(
+      '.home__footer__counter__total'
+    );
+    this.categoryElement = document.querySelector(
+      '.home__footer__info__category'
+    );
+    this.titleElement = document.querySelector('.home__footer__info__title');
 
     this.scroll = {
       position: 0,
@@ -40,6 +46,7 @@ export default class Home {
     this.isDown = false;
     this.isAnimating = false;
     this.view = 'main';
+    this.activeIndex = 0;
 
     this.transformPrefix = Prefix('transform');
 
@@ -116,11 +123,13 @@ export default class Home {
     this.mainMediaElementSizes = {
       width: this.screen.height * 0.42,
       margin: this.screen.height * 0.33,
+      total: this.screen.height * 0.42 + this.screen.height * 0.33,
     };
 
     this.allMediaElementSizes = {
       width: this.screen.height * 0.42 * 0.7,
       margin: this.screen.height * 0.126,
+      total: this.screen.height * 0.42 * 0.7 + this.screen.height * 0.126,
     };
 
     if (this.view === 'main') {
@@ -196,14 +205,23 @@ export default class Home {
 
     if (this.view === 'main') {
       this.onShowAll();
+
       this.buttonViewElement.classList.add(
         'home__footer__view__button--active'
       );
+
+      // hide category and title
+      // show filter list and each item title and category
+      // change number of counter
     } else {
       this.onShowMain();
       this.buttonViewElement.classList.remove(
         'home__footer__view__button--active'
       );
+
+      // hide filter list and each item title and category
+      // show category and title
+      // change number of counter
     }
   }
 
@@ -214,14 +232,11 @@ export default class Home {
     );
 
     const startWidth =
-      (this.allMediaElementSizes.width +
-        this.allMediaElementSizes.margin -
-        this.allMediaElementSizes.width / 2) *
+      (this.allMediaElementSizes.total - this.allMediaElementSizes.width / 2) *
       this.mediaElementsFiltered.length;
 
     const endWidth =
-      (this.mainMediaElementSizes.width +
-        this.mainMediaElementSizes.margin -
+      (this.mainMediaElementSizes.total -
         this.mainMediaElementSizes.width / 2) *
       (this.mediaElementsFiltered.length - 1);
 
@@ -230,7 +245,7 @@ export default class Home {
 
     const endX =
       -this.scroll.current +
-      (this.mainMediaElementSizes.width + this.mainMediaElementSizes.margin) *
+      this.mainMediaElementSizes.total *
         (this.mediaElementsFiltered.length - 1) -
       this.mainMediaElementSizes.width / 2;
 
@@ -249,20 +264,17 @@ export default class Home {
   onShowAll() {
     const startX =
       -this.scroll.current +
-      (this.mainMediaElementSizes.width + this.mainMediaElementSizes.margin) *
+      this.mainMediaElementSizes.total *
         (this.mediaElementsFiltered.length - 1) -
       this.mainMediaElementSizes.width / 2;
 
     const startWidth =
-      (this.mainMediaElementSizes.width +
-        this.mainMediaElementSizes.margin -
+      (this.mainMediaElementSizes.total -
         this.mainMediaElementSizes.width / 2) *
       (this.mediaElementsFiltered.length - 1);
 
     const endWidth =
-      (this.allMediaElementSizes.width +
-        this.allMediaElementSizes.margin -
-        this.allMediaElementSizes.width / 2) *
+      (this.allMediaElementSizes.total - this.allMediaElementSizes.width / 2) *
       this.mediaElementsFiltered.length;
 
     this.scroll.current = this.scroll.target =
@@ -302,6 +314,49 @@ export default class Home {
     this.isAnimating = false;
   }
 
+  onChangeIndex() {
+    if (
+      this.isAnimating ||
+      this.activeIndex > this.mediaElementsFiltered.length - 1
+    )
+      return;
+
+    const activeMediaElement =
+      this.mediaElementsFiltered[this.activeIndex].element;
+
+    if (this.animateMainInfos) {
+      this.animateMainInfos.kill();
+    }
+
+    this.animateMainInfos = gsap.timeline();
+
+    if (this.view === 'main') {
+      this.animateMainInfos
+        .to(
+          [this.counterCurrentElement, this.categoryElement, this.titleElement],
+          {
+            opacity: 0,
+          }
+        )
+        .call(() => {
+          this.counterCurrentElement.innerHTML = this.activeIndex + 1;
+          this.categoryElement.innerHTML =
+            activeMediaElement.getAttribute('data-title');
+          this.titleElement.innerHTML =
+            activeMediaElement.getAttribute('data-brand');
+        })
+        .to([this.counterCurrentElement, this.titleElement], { opacity: 1 })
+        .to(this.categoryElement, { opacity: 1 }, '-=0.25');
+    } else {
+      this.animateMainInfos
+        .to(this.counterCurrentElement, { opacity: 0 })
+        .call(() => {
+          this.counterCurrentElement.innerHTML = this.activeIndex + 1;
+        })
+        .to(this.counterCurrentElement, { opacity: 1 });
+    }
+  }
+
   addEventListeners() {
     this.buttonViewElement.addEventListener(
       'click',
@@ -332,6 +387,22 @@ export default class Home {
     this.scroll.velocity = (this.scroll.current - this.scroll.last) * 0.05;
 
     this.scroll.last = this.scroll.current;
+
+    let index = this.activeIndex;
+
+    if (this.view === 'main') {
+      index = Math.round(
+        this.scroll.current / this.mainMediaElementSizes.total
+      );
+    } else {
+      index = Math.round(this.scroll.current / this.allMediaElementSizes.total);
+    }
+
+    if (index !== this.activeIndex) {
+      this.activeIndex = index;
+
+      this.onChangeIndex();
+    }
 
     each(this.medias, (media) => {
       if (media && media.update) {

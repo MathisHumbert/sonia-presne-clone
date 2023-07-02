@@ -1,0 +1,35 @@
+@font-face {
+  font-family: 'Audrey';
+  src: url('../fonts/audrey-normal.woff2') format('woff2'),
+    url('../fonts/audrey-normal.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Audrey';
+  src: url('../fonts/audrey-medium.woff2') format('woff2'),
+    url('../fonts/audrey-medium.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Hind';
+  src: url('../fonts/hind-regular.woff2') format('woff2'),
+    url('../fonts/hind-regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Hind';
+  src: url('../fonts/hind-medium.woff2') format('woff2'),
+    url('../fonts/hind-medium.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
