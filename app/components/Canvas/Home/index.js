@@ -5,6 +5,7 @@ import { map, each, filter } from 'lodash';
 
 import Media from './Media';
 import MediaDom from './MediaDom';
+import FooterDom from './FooterDom';
 
 export default class Home {
   constructor({ scene, viewport, screen, geometry }) {
@@ -13,23 +14,11 @@ export default class Home {
     this.screen = screen;
     this.geometry = geometry;
 
+    this.wrapperElement = document.getElementById('wrapper');
     this.galleryItemElements = document.querySelectorAll(
       '.home__gallery__item'
     );
     this.mediaElements = document.querySelectorAll('.home__gallery__media');
-    this.buttonViewElement = document.querySelector(
-      '.home__footer__view__button'
-    );
-    this.counterCurrentElement = document.querySelector(
-      '.home__footer__counter__current'
-    );
-    this.counterTotalElement = document.querySelector(
-      '.home__footer__counter__total'
-    );
-    this.categoryElement = document.querySelector(
-      '.home__footer__info__category'
-    );
-    this.titleElement = document.querySelector('.home__footer__info__title');
 
     this.scroll = {
       position: 0,
@@ -46,6 +35,7 @@ export default class Home {
     this.isDown = false;
     this.isAnimating = false;
     this.view = 'main';
+    this.filter = 'all';
     this.activeIndex = 0;
 
     this.transformPrefix = Prefix('transform');
@@ -56,7 +46,10 @@ export default class Home {
     this.onResize({ viewport, screen });
     this.show();
 
-    this.addEventListeners();
+    this.footerDom = new FooterDom({
+      onButtonViewClick: this.onViewClick.bind(this),
+      onButtonFilterClick: this.onFilterClick.bind(this),
+    });
   }
 
   createDomGallery() {
@@ -204,24 +197,37 @@ export default class Home {
     this.isAnimating = true;
 
     if (this.view === 'main') {
+      this.wrapperElement.classList.add('is-overview');
+
+      this.footerDom.onViewClick({
+        view: this.view,
+        totalMediaElements: 19,
+      });
+
       this.onShowAll();
-
-      this.buttonViewElement.classList.add(
-        'home__footer__view__button--active'
-      );
-
-      // hide category and title
-      // show filter list and each item title and category
-      // change number of counter
     } else {
-      this.onShowMain();
-      this.buttonViewElement.classList.remove(
-        'home__footer__view__button--active'
-      );
+      this.wrapperElement.classList.remove('is-overview');
 
-      // hide filter list and each item title and category
-      // show category and title
-      // change number of counter
+      this.footerDom.onViewClick({
+        view: this.view,
+        totalMediaElements: 12,
+      });
+
+      this.onShowMain();
+    }
+  }
+
+  onFilterClick({ filter }) {
+    if (filter === this.filter) return;
+
+    this.filter = filter;
+
+    if (this.filter == 'all') {
+      this.onShowAll();
+    } else if (this.filter === 'film') {
+      // this.onShowFilm()
+    } else {
+      // this.onShowPrint()
     }
   }
 
@@ -257,7 +263,7 @@ export default class Home {
     });
 
     gsap.delayedCall(1, () => {
-      this.onFilterClickEnd('main');
+      this.onViewClickEnd('main');
     });
   }
 
@@ -292,11 +298,11 @@ export default class Home {
     });
 
     gsap.delayedCall(1, () => {
-      this.onFilterClickEnd('all');
+      this.onViewClickEnd('all');
     });
   }
 
-  onFilterClickEnd(newView) {
+  onViewClickEnd(newView) {
     this.view = newView;
 
     if (this.view === 'main') {
@@ -324,44 +330,11 @@ export default class Home {
     const activeMediaElement =
       this.mediaElementsFiltered[this.activeIndex].element;
 
-    if (this.animateMainInfos) {
-      this.animateMainInfos.kill();
-    }
-
-    this.animateMainInfos = gsap.timeline();
-
-    if (this.view === 'main') {
-      this.animateMainInfos
-        .to(
-          [this.counterCurrentElement, this.categoryElement, this.titleElement],
-          {
-            opacity: 0,
-          }
-        )
-        .call(() => {
-          this.counterCurrentElement.innerHTML = this.activeIndex + 1;
-          this.categoryElement.innerHTML =
-            activeMediaElement.getAttribute('data-title');
-          this.titleElement.innerHTML =
-            activeMediaElement.getAttribute('data-brand');
-        })
-        .to([this.counterCurrentElement, this.titleElement], { opacity: 1 })
-        .to(this.categoryElement, { opacity: 1 }, '-=0.25');
-    } else {
-      this.animateMainInfos
-        .to(this.counterCurrentElement, { opacity: 0 })
-        .call(() => {
-          this.counterCurrentElement.innerHTML = this.activeIndex + 1;
-        })
-        .to(this.counterCurrentElement, { opacity: 1 });
-    }
-  }
-
-  addEventListeners() {
-    this.buttonViewElement.addEventListener(
-      'click',
-      this.onViewClick.bind(this)
-    );
+    this.footerDom.onChangeIndex({
+      activeMediaElement,
+      activeIndex: this.activeIndex,
+      view: this.view,
+    });
   }
 
   /**
