@@ -67,6 +67,8 @@ app.get('/about', async (req, res) => {
 
   const about = await api.getSingle('about');
 
+  console.log(about);
+
   res.render('pages/about', { about });
 });
 

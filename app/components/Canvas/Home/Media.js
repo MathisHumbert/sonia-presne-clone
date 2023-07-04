@@ -139,7 +139,7 @@ export default class Media {
 
     const tl = gsap.timeline({
       duration: 1,
-      ease: 'linear',
+      // ease: 'linear',
     });
 
     const scaleX =

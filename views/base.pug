@@ -19,7 +19,7 @@ html(lang="en")
     link(href="main.css" rel="stylesheet")
 
   body(class=isDesktop ? 'desktop' : isTablet ? 'tablet' : isPhone ? 'phone' : '')
-    //- inclues ./layouts/
+    include ./layouts/header
 
     .content#content(data-template=template)
       block content

@@ -2,8 +2,10 @@ import each from 'lodash/each';
 
 import Home from 'pages/Home';
 import About from 'pages/About';
+
 import Canvas from 'components/Canvas';
 import Preloader from 'components/Preloader';
+import Navigation from 'components/Navigation';
 class App {
   constructor() {
     this.createContent();
@@ -11,6 +13,7 @@ class App {
     this.createCanvas();
     this.createPages();
     this.createPreloader();
+    this.createNavigation();
 
     this.addEventsListeners();
     this.addLinkListeners();
@@ -39,6 +42,10 @@ class App {
 
   createCanvas() {
     this.canvas = new Canvas({ template: this.template });
+  }
+
+  createNavigation() {
+    this.navigation = new Navigation();
   }
 
   createPreloader() {
@@ -76,6 +83,7 @@ class App {
   }
 
   async onChange({ url, push }) {
+    console.log('onchange');
     this.canvas.onChangeStart(this.template, url);
 
     await this.page.hide();

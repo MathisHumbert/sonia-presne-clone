@@ -10,4 +10,10 @@ export default class About extends Page {
       },
     });
   }
+
+  show() {
+    // custom animation
+
+    super.show();
+  }
 }

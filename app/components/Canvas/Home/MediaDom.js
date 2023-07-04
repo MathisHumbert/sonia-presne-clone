@@ -1,14 +1,16 @@
 import { gsap } from 'gsap';
 
 export default class MediaDom {
-  constructor({ element, screen, media }) {
+  constructor({ element, screen, media, index }) {
     this.element = element;
     this.screen = screen;
     this.media = media;
+    this.index = index;
 
     this.scroll = 0;
     this.mainIndex = Number(element.getAttribute('data-main-index'));
     this.isMain = element.getAttribute('data-main') === 'true';
+    this.category = element.getAttribute('data-category');
   }
 
   onResize({
@@ -69,15 +71,23 @@ export default class MediaDom {
     this.width =
       (this.allMediaElementSizes.width + this.allMediaElementSizes.margin) *
         index -
-      this.allMediaElementSizes.width / 2;
+      this.allMediaElementSizes.width * 0.7;
 
-    gsap.set(this.element, {
+    console.log(this.allMediaElementSizes.total);
+
+    gsap.to(this.element, {
       scale: 0.7,
       translateX: -scroll + this.width,
       translateY: '-50%',
       autoAlpha: 1,
-      // delay: 0.1,
-      onComplete: () => this.media.changeSize({ scroll, uAlpha: 1 }),
+      duration: 1,
+      ease: 'expo.inOut',
+      onUpdate: () => {
+        this.media.setSize({
+          scroll,
+          uAlpha: gsap.getProperty(this.element, 'autoAlpha'),
+        });
+      },
     });
   }
 
@@ -88,19 +98,69 @@ export default class MediaDom {
           this.mainIndex -
         this.mainMediaElementSizes.width / 2;
 
-      gsap.set(this.element, {
+      gsap.to(this.element, {
         scale: 1,
         translateX: -scroll + this.width,
         translateY: '-50%',
-        onComplete: () => this.media.changeSize({ scroll, uAlpha: 1 }),
+        autoAlpha: 1,
+        duration: 1,
+        ease: 'expo.inOut',
+        onUpdate: () => {
+          this.media.setSize({
+            scroll,
+            uAlpha: gsap.getProperty(this.element, 'autoAlpha'),
+          });
+        },
       });
     } else {
-      gsap.set(this.element, {
+      gsap.to(this.element, {
         scale: 1,
         translateX: endX,
         translateY: '-50%',
         autoAlpha: 0,
-        onComplete: () => this.media.changeSize({ scroll, uAlpha: 0 }),
+        duration: 1,
+        ease: 'expo.inOut',
+        onUpdate: () => {
+          this.media.setSize({
+            scroll,
+            uAlpha: gsap.getProperty(this.element, 'autoAlpha'),
+          });
+        },
+      });
+    }
+  }
+
+  changeSizeFromAllToFilter({ scroll, category, index, endX }) {
+    if (this.category === category) {
+      this.width =
+        (this.allMediaElementSizes.width + this.allMediaElementSizes.margin) *
+          index -
+        this.allMediaElementSizes.width / 2;
+
+      gsap.to(this.element, {
+        translateX: -scroll + this.width,
+        autoAlpha: 1,
+        duration: 1,
+        ease: 'expo.inOut',
+        onUpdate: () => {
+          this.media.setSize({
+            scroll,
+            uAlpha: gsap.getProperty(this.element, 'autoAlpha'),
+          });
+        },
+      });
+    } else {
+      gsap.to(this.element, {
+        translateX: endX,
+        autoAlpha: 0,
+        duration: 1,
+        ease: 'expo.inOut',
+        onUpdate: () => {
+          this.media.setSize({
+            scroll,
+            uAlpha: gsap.getProperty(this.element, 'autoAlpha'),
+          });
+        },
       });
     }
   }

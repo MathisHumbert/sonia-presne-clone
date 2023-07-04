@@ -20,6 +20,8 @@ export default class FooterDom extends Component {
     this.onButtonViewClick = onButtonViewClick;
     this.onButtonFilterClick = onButtonFilterClick;
 
+    this.isFilterOpen = false;
+
     this.addEventListeners();
   }
 
@@ -64,45 +66,32 @@ export default class FooterDom extends Component {
   }
 
   onViewClick({ view, totalMediaElements }) {
-    const tl = gsap.timeline({ defaults: { ease: 'linear' } });
+    each(this.elements.filterItems, (el, i) => {
+      if (i === 0) {
+        el.classList.add('home__footer__filters__item--active');
+      } else {
+        el.classList.remove('home__footer__filters__item--active');
+      }
+    });
 
     if (view === 'main') {
       this.elements.buttonView.classList.add(
         'home__footer__view__button--active'
       );
 
-      tl.to(
-        this.elements.counterTotal,
-        {
-          opacity: 0,
-        },
-        0
-      )
-        .call(() => {
-          this.elements.counterTotal.innerHTML = totalMediaElements;
-          this.elements.filterItems[0].classList.add(
-            'home__footer__filters__item--active'
-          );
-        })
-        .to(this.elements.counterTotal, { opacity: 1 }, 0.5);
+      this.onChangeCounterTotal({ total: totalMediaElements });
     } else {
       this.elements.buttonView.classList.remove(
         'home__footer__view__button--active'
       );
 
-      tl.to(
-        this.elements.counterTotal,
-        {
-          opacity: 0,
-          onComplete: () =>
-            (this.elements.counterTotal.innerHTML = totalMediaElements),
-        },
-        0
-      ).to(this.elements.counterTotal, { opacity: 1 }, 0.5);
+      this.onChangeCounterTotal({ total: totalMediaElements });
     }
   }
 
   onFilterClick({ filterElement, index }) {
+    this.isFilterOpen = !this.isFilterOpen;
+
     const filter = filterElement.getAttribute('data-filter');
 
     this.onButtonFilterClick({
@@ -116,6 +105,15 @@ export default class FooterDom extends Component {
         el.classList.remove('home__footer__filters__item--active');
       }
     });
+  }
+
+  onChangeCounterTotal({ total }) {
+    const tl = gsap.timeline({ defaults: { ease: 'linear' } });
+
+    tl.to(this.elements.counterTotal, {
+      opacity: 0,
+      onComplete: () => (this.elements.counterTotal.innerHTML = total),
+    }).to(this.elements.counterTotal, { opacity: 1 });
   }
 
   addEventListeners() {

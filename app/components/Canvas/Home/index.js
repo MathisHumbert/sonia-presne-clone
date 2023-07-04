@@ -1,7 +1,7 @@
 import { gsap } from 'gsap';
 import normalizeWheel from 'normalize-wheel';
 import Prefix from 'prefix';
-import { map, each, filter } from 'lodash';
+import { map, each, filter, findIndex } from 'lodash';
 
 import Media from './Media';
 import MediaDom from './MediaDom';
@@ -58,6 +58,7 @@ export default class Home {
       (element, index) =>
         new MediaDom({
           element,
+          index,
           screen: this.screen,
           media: this.medias[index],
         })
@@ -213,33 +214,101 @@ export default class Home {
         totalMediaElements: 12,
       });
 
+      this.filter == 'all';
+
       this.onShowMain();
     }
   }
 
   onFilterClick({ filter }) {
-    if (filter === this.filter) return;
+    if (filter === this.filter || this.isAnimating) return;
+
+    this.isAnimating = true;
 
     this.filter = filter;
 
     if (this.filter == 'all') {
       this.onShowAll();
-    } else if (this.filter === 'film') {
-      // this.onShowFilm()
     } else {
-      // this.onShowPrint()
+      this.onShowFilter();
     }
   }
 
-  onShowMain() {
+  onShowFilter() {
+    const startWidth =
+      (this.allMediaElementSizes.total - this.allMediaElementSizes.width / 2) *
+      this.mediaElementsFiltered.length;
+
     this.mediaElementsFiltered = filter(
       this.mediaElements,
-      (item) => item.isMain === true
+      (item) => item.category === this.filter
     );
+
+    const endWidth =
+      (this.allMediaElementSizes.total - this.allMediaElementSizes.width / 2) *
+      (this.mediaElementsFiltered.length - 1);
+
+    this.scroll.current = this.scroll.target =
+      this.scroll.current * (endWidth / startWidth);
+
+    this.footerDom.onChangeCounterTotal({
+      total: this.mediaElementsFiltered.length,
+    });
+
+    let lastFilterIndex = 0;
+
+    each(this.mediaElements, (element, index) => {
+      if (element.category !== this.filter) {
+        const endX =
+          (this.allMediaElementSizes.width + this.allMediaElementSizes.margin) *
+            lastFilterIndex -
+          this.allMediaElementSizes.width / 2;
+
+        element.changeSizeFromAllToFilter({
+          scroll: this.scroll.current,
+          category: this.filter,
+          index,
+          endX,
+        });
+      } else {
+        const elementIndex = findIndex(
+          this.mediaElementsFiltered,
+          (el) => el.index === element.index
+        );
+
+        lastFilterIndex = elementIndex;
+
+        element.changeSizeFromAllToFilter({
+          scroll: this.scroll.current,
+          category: this.filter,
+          index: elementIndex,
+        });
+      }
+    });
+
+    gsap.delayedCall(1, () => {
+      this.onShowEnd('all');
+    });
+  }
+
+  onShowMain() {
+    if (this.filter === 'all') {
+      this.mediaElementsFiltered = filter(
+        this.mediaElements,
+        (item) => item.isMain === true
+      );
+    }
 
     const startWidth =
       (this.allMediaElementSizes.total - this.allMediaElementSizes.width / 2) *
       this.mediaElementsFiltered.length;
+
+    if (this.filter !== 'all') {
+      this.mediaElementsFiltered = filter(
+        this.mediaElements,
+        (item) => item.isMain === true
+      );
+    }
 
     const endWidth =
       (this.mainMediaElementSizes.total -
@@ -263,7 +332,7 @@ export default class Home {
     });
 
     gsap.delayedCall(1, () => {
-      this.onViewClickEnd('main');
+      this.onShowEnd('main');
     });
   }
 
@@ -288,6 +357,10 @@ export default class Home {
 
     this.mediaElementsFiltered = this.mediaElements;
 
+    this.footerDom.onChangeCounterTotal({
+      total: this.mediaElementsFiltered.length,
+    });
+
     each(this.mediaElementsFiltered, (element, index) => {
       element.changeSizeFromMainToAll({
         scroll: this.scroll.current,
@@ -298,11 +371,11 @@ export default class Home {
     });
 
     gsap.delayedCall(1, () => {
-      this.onViewClickEnd('all');
+      this.onShowEnd('all');
     });
   }
 
-  onViewClickEnd(newView) {
+  onShowEnd(newView) {
     this.view = newView;
 
     if (this.view === 'main') {
