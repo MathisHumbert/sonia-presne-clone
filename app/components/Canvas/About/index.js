@@ -1,4 +1,4 @@
-import Media from '../Media';
+import Background from './Background';
 
 export default class About {
   constructor({ scene, viewport, screen, geometry }) {
@@ -7,11 +7,14 @@ export default class About {
     this.screen = screen;
     this.geometry = geometry;
 
-    this.createMedia();
+    this.createBackground();
+
+    this.onResize({ viewport, screen });
+    this.show();
   }
 
-  createMedia() {
-    this.media = new Media({
+  createBackground() {
+    this.background = new Background({
       scene: this.scene,
       viewport: this.viewport,
       screen: this.screen,
@@ -23,14 +26,14 @@ export default class About {
    * Animations.
    */
   show() {
-    if (this.media && this.media.show) {
-      this.media.show();
+    if (this.background && this.background.show) {
+      this.background.show();
     }
   }
 
   hide() {
-    if (this.media && this.media.hide) {
-      this.media.hide();
+    if (this.background && this.background.hide) {
+      this.background.hide();
     }
   }
 
@@ -41,17 +44,17 @@ export default class About {
     this.viewport = viewport;
     this.screen = screen;
 
-    if (this.media && this.media.onResize) {
-      this.media.onResize({ viewport, screen });
+    if (this.background && this.background.onResize) {
+      this.background.onResize({ viewport, screen });
     }
   }
 
   /**
    * Loop.
    */
-  update({ scroll, velocity }) {
-    if (this.media && this.media.update) {
-      this.media.update({ scroll, velocity });
+  update() {
+    if (this.background && this.background.update) {
+      this.background.update();
     }
   }
 
@@ -59,8 +62,8 @@ export default class About {
    * Destroy.
    */
   destroy() {
-    if (this.media) {
-      this.media.mesh.removeFromParent();
+    if (this.background) {
+      this.background.mesh.removeFromParent();
     }
   }
 }

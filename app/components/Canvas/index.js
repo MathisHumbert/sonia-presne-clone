@@ -1,8 +1,8 @@
 import * as THREE from 'three';
 
-import Home from './Home/index';
-import About from './About/index';
-
+import Gallery from './Gallery';
+import Project from './Project';
+import About from './About';
 export default class Canvas {
   constructor({ template }) {
     this.template = template;
@@ -49,22 +49,16 @@ export default class Canvas {
   }
 
   /**
-   * Home.
+   * Gallery.
    */
-  createHome() {
-    this.home = new Home({
+  createGallery(template) {
+    this.gallery = new Gallery({
       scene: this.scene,
       viewport: this.viewport,
       screen: this.screen,
       geometry: this.geometry,
+      template,
     });
-  }
-
-  destroyHome() {
-    if (!this.home) return;
-
-    this.home.destroy();
-    this.home = null;
   }
 
   /**
@@ -87,6 +81,25 @@ export default class Canvas {
   }
 
   /**
+   * Project.
+   */
+  createProject() {
+    this.project = new Project({
+      scene: this.scene,
+      viewport: this.viewport,
+      screen: this.screen,
+      geometry: this.geometry,
+    });
+  }
+
+  destroyProject() {
+    if (!this.project) return;
+
+    this.project.destroy();
+    this.project = null;
+  }
+
+  /**
    * Events.
    */
   onPreloaded() {
@@ -98,34 +111,43 @@ export default class Canvas {
   }
 
   onChangeStart(template, url) {
-    if (this.home) {
-      this.home.hide();
-    }
-
     if (this.about) {
       this.about.hide();
+    }
+
+    if (this.project) {
+      this.project.hide();
     }
   }
 
   onChangeEnd(template) {
-    if (this.home) {
-      this.destroyHome();
-    }
-
     if (this.about) {
       this.destroyAbout();
     }
 
-    if (template === 'home') {
-      this.createHome();
+    if (this.project) {
+      this.destroyProject();
     }
 
     if (template === 'about') {
       this.createAbout();
     }
 
-    this.template = template;
+    if (template === 'project') {
+      this.createProject();
+    }
 
+    if (!this.gallery) {
+      this.createGallery(template);
+    } else {
+      if (this.template === 'home' && template === 'about') {
+        this.gallery.onHomeToAbout();
+      } else if (this.template === 'about' && template === 'home') {
+        this.gallery.onAboutToHome();
+      }
+    }
+
+    this.template = template;
     this.onResize();
   }
 
@@ -146,8 +168,12 @@ export default class Canvas {
 
     this.viewport = { width, height };
 
-    if (this.home && this.home.onResize) {
-      this.home.onResize({ viewport: this.viewport, screen: this.screen });
+    if (this.gallery && this.gallery.onResize) {
+      this.gallery.onResize({ viewport: this.viewport, screen: this.screen });
+    }
+
+    if (this.project && this.project.onResize) {
+      this.project.onResize({ viewport: this.viewport, screen: this.screen });
     }
 
     if (this.about && this.about.onResize) {
@@ -156,26 +182,26 @@ export default class Canvas {
   }
 
   onTouchDown(event) {
-    if (this.home && this.home.onTouchDown) {
-      this.home.onTouchDown(event);
+    if (this.gallery && this.gallery.onTouchDown) {
+      this.gallery.onTouchDown(event);
     }
   }
 
   onTouchMove(event) {
-    if (this.home && this.home.onTouchMove) {
-      this.home.onTouchMove(event);
+    if (this.gallery && this.gallery.onTouchMove) {
+      this.gallery.onTouchMove(event);
     }
   }
 
   onTouchUp(event) {
-    if (this.home && this.home.onTouchUp) {
-      this.home.onTouchUp(event);
+    if (this.gallery && this.gallery.onTouchUp) {
+      this.gallery.onTouchUp(event);
     }
   }
 
   onWheel(event) {
-    if (this.home && this.home.onWheel) {
-      this.home.onWheel(event);
+    if (this.gallery && this.gallery.onWheel) {
+      this.gallery.onWheel(event);
     }
   }
 
@@ -183,12 +209,16 @@ export default class Canvas {
    * Loop.
    */
   update({ scroll, velocity }) {
-    if (this.home && this.home.update) {
-      this.home.update({ scroll, velocity });
+    if (this.gallery && this.gallery.update) {
+      this.gallery.update({ scroll, velocity });
+    }
+
+    if (this.project && this.project.update) {
+      this.project.update({ scroll, velocity });
     }
 
     if (this.about && this.about.update) {
-      this.about.update({ scroll, velocity });
+      this.about.update();
     }
 
     this.renderer.render(this.scene, this.camera);

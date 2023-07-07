@@ -12,8 +12,10 @@
 @import './base/base';
 @import './base/fonts';
 
-@import './pages/home/gallery';
-@import './pages/home/footer';
+@import './pages/home';
 @import './pages/about';
 
 @import './layouts/header';
+@import './layouts/gallery/gallery';
+@import './layouts/gallery/footer';
+@import './layouts/logos';

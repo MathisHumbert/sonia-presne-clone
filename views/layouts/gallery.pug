@@ -1,0 +1,29 @@
+.gallery
+  .gallery__items
+    each item in home.data.body[0].items
+      .gallery__item(data-category=item.category data-brand=item.brand data-title=item.title data-main=`${item.main}` data-main-index=`${item.main_index}`)
+        a.gallery__category(href="#")=item.category 
+        a.gallery__media__wrapper(href="#")
+          media.gallery__media(data-main=`${item.main}`)
+            img(src=item.image.url, alt="").gallery__media__img
+        a.gallery__title(href="#")=item.title 
+  .gallery__footer
+    .gallery__footer__view
+      button.gallery__footer__view__button
+        i
+        i
+        i 
+        i
+    .gallery__footer__counter
+      span
+        span.gallery__footer__counter__current 1
+        | /
+        span.gallery__footer__counter__total 12
+    .gallery__footer__info 
+      span.gallery__footer__info__category Lebanese breast cancer foundation 
+      span.gallery__footer__info__title BREAD EXAM
+    .gallery__footer__filters 
+      span.gallery__footer__filters__title Filters
+      span.gallery__footer__filters__item(data-filter='all') all
+      span.gallery__footer__filters__item(data-filter='film') film
+      span.gallery__footer__filters__item(data-filter='print') print

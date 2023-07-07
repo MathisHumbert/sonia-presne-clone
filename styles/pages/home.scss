@@ -1,0 +1,9 @@
+.home {
+  @extend %page;
+}
+
+.home__wrapper {
+  @extend %page__wrapper;
+
+  @extend %cover;
+}

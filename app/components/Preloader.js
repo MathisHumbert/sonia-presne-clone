@@ -1,24 +1,31 @@
 import imagesLoaded from 'imagesloaded';
 import * as THREE from 'three';
 import map from 'lodash/map';
-
-import Component from 'classes/Component';
-
+import { gsap } from 'gsap';
 export default class Preloader {
   constructor() {
     this.loadedTextureUrl = [];
     window.TEXTURES = {};
 
     this.textureLoader = new THREE.TextureLoader();
+
+    this.logoOne = document.querySelector('.logo__one');
   }
 
   preload(content, onLoaded) {
-    const images = content.querySelectorAll('img');
+    const soniaImage = new Image();
+    soniaImage.crossOrigin = 'anonymous';
+    soniaImage.src = 'logo-alpha.jpg';
+
+    const contentImages = content.querySelectorAll('img');
+    const galleryImages = document.querySelectorAll('.gallery__media__img');
+
+    const images = [...contentImages, ...galleryImages, soniaImage];
 
     this.loadedTextureUrl.push(window.location.pathname);
 
     const loadImages = new Promise((resolve) => {
-      imagesLoaded(content, resolve);
+      imagesLoaded(document.body, resolve);
     });
 
     const loadTextures = Promise.all(
@@ -36,7 +43,11 @@ export default class Preloader {
     );
 
     Promise.all([loadImages, loadTextures]).then(() => {
-      onLoaded();
+      this.logoOne.classList.add('active');
+      gsap.fromTo('.logo__one', { scale: 1.5 }, { scale: 1, duration: 1 });
+      gsap.delayedCall(1, () => {
+        onLoaded();
+      });
     });
   }
 

@@ -1,0 +1,230 @@
+.gallery__footer {
+  position: absolute;
+  left: 0;
+  bottom: 1.8rem;
+  width: 100%;
+}
+
+.gallery__footer__view,
+.gallery__footer__counter {
+  position: absolute;
+  bottom: 0;
+  height: 15vh;
+  display: flex;
+  align-items: center;
+  padding-top: 0.5rem;
+  opacity: 0;
+  transition: opacity 0.5s linear;
+}
+
+.visible {
+  .gallery__footer__view,
+  .gallery__footer__counter {
+    opacity: 1;
+  }
+}
+
+.gallery__footer__view {
+  left: 7rem;
+}
+
+.gallery__footer__view__button {
+  width: 5rem;
+  height: 5rem;
+  padding: 1rem;
+  margin: -1rem;
+  position: relative;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.gallery__footer__view__button i {
+  position: absolute;
+  top: 25%;
+  left: 25%;
+  width: 50%;
+  height: 50%;
+  background: $color-port-gore;
+  border-radius: 100%;
+  transform-origin: 50% 50%;
+  transition: all 0.5s cubic-bezier(0.85, 0, 0.3, 1);
+
+  &:nth-child(1) {
+    transform: scale(0.3) translate3d(-90%, -90%, 0);
+  }
+
+  &:nth-child(2) {
+    transform: scale(0.3) translate3d(90%, -90%, 0);
+  }
+
+  &:nth-child(3) {
+    transform: scale(0.3) translate3d(90%, 90%, 0);
+  }
+
+  &:nth-child(4) {
+    transform: scale(0.3) translate3d(-90%, 90%, 0);
+  }
+}
+
+.gallery__footer__view__button--active i {
+  &:nth-child(1) {
+    transform: translate3d(-75%, 0, 0) scale(0.3);
+  }
+
+  &:nth-child(2) {
+    transform: translate3d(-25%, 0, 0) scale(0.3);
+  }
+
+  &:nth-child(3) {
+    transform: translate3d(75%, 0, 0) scale(0.3);
+  }
+
+  &:nth-child(4) {
+    transform: translate3d(25%, 0, 0) scale(0.3);
+  }
+}
+
+.gallery__footer__view__button:hover i {
+  &:nth-child(1) {
+    transform: scale(0.3) translate3d(-110%, -110%, 0);
+  }
+
+  &:nth-child(2) {
+    transform: scale(0.3) translate3d(110%, -110%, 0);
+  }
+
+  &:nth-child(3) {
+    transform: scale(0.3) translate3d(110%, 110%, 0);
+  }
+
+  &:nth-child(4) {
+    transform: scale(0.3) translate3d(-110%, 110%, 0);
+  }
+}
+
+.gallery__footer__view__button--active:hover i {
+  &:nth-child(1) {
+    transform: translate3d(-75%, 0, 0) scale(0.3);
+  }
+
+  &:nth-child(2) {
+    transform: translate3d(-25%, 10%, 0) scale(0.3);
+  }
+
+  &:nth-child(3) {
+    transform: translate3d(75%, 0, 0) scale(0.3);
+  }
+
+  &:nth-child(4) {
+    transform: translate3d(25%, -10%, 0) scale(0.3);
+  }
+}
+
+.gallery__footer__counter {
+  @extend %description-2;
+  transition: opacity 0.5s linear;
+
+  right: 7rem;
+}
+
+.gallery__footer__counter__current {
+  will-change: opacity;
+}
+
+.gallery__footer__counter__total {
+  will-change: opacity;
+}
+
+.gallery__footer__info {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 15vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  pointer-events: none;
+  transform: translateY(-2rem);
+  opacity: 0;
+  transition: opacity 0.5s linear, transform 0.5s cubic-bezier(0, 0, 0, 1);
+  transition-delay: 0.5s;
+}
+
+.visible .gallery__footer__info {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.is-overview .gallery__footer__info {
+  transform: translateY(-2rem);
+  opacity: 0;
+  transition: opacity 0.5s linear, transform 0.5s cubic-bezier(1, 0, 1, 1);
+  transition-delay: 0;
+}
+
+.gallery__footer__info__category {
+  @extend %description-2;
+
+  color: $color-regent-st-blue;
+  margin-bottom: 1.5rem;
+  will-change: opacity;
+}
+
+.gallery__footer__info__title {
+  @extend %title-2;
+
+  color: $color-port-gore;
+  margin-bottom: 1rem;
+  will-change: opacity;
+}
+
+.gallery__footer__filters {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 15vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding-top: 0.5rem;
+  opacity: 0;
+  transform: translateY(2rem);
+  pointer-events: none;
+  transition: opacity 0.5s linear, transform 0.5s cubic-bezier(1, 0, 1, 1);
+  transition-delay: 0;
+
+  span {
+    @extend %description-2;
+  }
+}
+
+.is-overview .gallery__footer__filters {
+  transform: translateY(0);
+  opacity: 1;
+  transition: opacity 0.5s linear, transform 0.5s cubic-bezier(0, 0, 0, 1);
+  transition-delay: 0.5s;
+}
+
+.gallery__footer__filters__title {
+  color: $color-regent-st-blue;
+}
+
+.gallery__footer__filters__item {
+  transition: all 0.5s linear;
+  pointer-events: all;
+  color: $color-port-gore-light;
+
+  &:hover {
+    color: $color-port-gore;
+  }
+}
+
+.gallery__footer__filters__item--active {
+  color: $color-port-gore;
+}

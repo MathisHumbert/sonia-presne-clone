@@ -6,3 +6,11 @@ block variables
 block content
   .about
     .about__wrapper#wrapper
+      h1.about__title
+        span=about.data.title
+      .about__filler 
+      .about__content
+        .about__content__text
+          p=about.data.content_top
+          p=about.data.content_bottom
+        a(href=about.data.mail_link)=about.data.mail_text 

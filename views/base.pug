@@ -20,8 +20,11 @@ html(lang="en")
 
   body(class=isDesktop ? 'desktop' : isTablet ? 'tablet' : isPhone ? 'phone' : '')
     include ./layouts/header
-
-    .content#content(data-template=template)
-      block content
+    include ./layouts/logos
+    
+    .content__wrapper
+      include ./layouts/gallery
+      .content#content(data-template=template)
+        block content
 
     script(src='main.js')

@@ -117,15 +117,15 @@ export default class Page {
    * Events.
    */
   onResize() {
-    // this.scroll = {
-    //   position: 0,
-    //   current: 0,
-    //   target: 0,
-    //   limit: 0,
-    //   last: 0,
-    //   velocity: 0,
-    //   ease: 0.05,
-    // };
+    this.scroll = {
+      position: 0,
+      current: 0,
+      target: 0,
+      limit: 0,
+      last: 0,
+      velocity: 0,
+      ease: 0.05,
+    };
 
     if (this.elements.wrapper) {
       this.scroll.limit =
@@ -136,7 +136,7 @@ export default class Page {
   }
 
   onTouchDown(event) {
-    if (this.isDesktop || !this.isVisible) return;
+    if (this.isDesktop || !this.isVisible || !this.isScrollable) return;
 
     this.isDown = true;
 
@@ -145,7 +145,8 @@ export default class Page {
   }
 
   onTouchMove(event) {
-    if (this.isDesktop || !this.isDown || !this.isVisible) return;
+    if (this.isDesktop || !this.isDown || !this.isVisible || !this.isScrollable)
+      return;
 
     const y = event.touches ? event.touches[0].clientY : event.clientY;
     const distance = this.start - y;
@@ -154,13 +155,13 @@ export default class Page {
   }
 
   onTouchUp() {
-    if (this.isDesktop || !this.isVisible) return;
+    if (this.isDesktop || !this.isVisible || !this.isScrollable) return;
 
     this.isDown = false;
   }
 
   onWheel(event) {
-    if (!this.isVisible) return;
+    if (!this.isVisible || !this.isScrollable) return;
 
     const { pixelY } = normalizeWheel(event);
 
@@ -171,7 +172,7 @@ export default class Page {
    * Loop.
    */
   update() {
-    if (!this.isVisible) return;
+    if (!this.isVisible || !this.isScrollable) return;
 
     this.scroll.target = this.clamp(this.scroll.target);
 

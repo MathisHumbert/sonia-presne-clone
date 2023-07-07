@@ -54,22 +54,28 @@ app.use((req, res, next) => {
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
+const handleRequest = async (api) => {
+  const home = await api.getSingle('home');
+
+  return { home };
+};
+
 app.get('/', async (req, res) => {
   const api = initApi(req);
 
-  const home = await api.getSingle('home');
+  const defaults = await handleRequest(api);
 
-  res.render('pages/home', { home });
+  res.render('pages/home', { ...defaults });
 });
 
 app.get('/about', async (req, res) => {
   const api = initApi(req);
 
+  const defaults = await handleRequest(api);
+
   const about = await api.getSingle('about');
 
-  console.log(about);
-
-  res.render('pages/about', { about });
+  res.render('pages/about', { ...defaults, about });
 });
 
 app.listen(port, () => {

@@ -4,4 +4,56 @@
 
 .about__wrapper {
   @extend %page__wrapper;
+  @extend %cover;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: $color-white;
+}
+
+.about__title {
+  @extend %description-2;
+
+  max-height: 30vh;
+  min-height: 30vh;
+  padding-bottom: 4rem;
+  display: flex;
+  align-items: flex-end;
+  letter-spacing: 0.6em;
+}
+
+.about__filler {
+  width: 65rem;
+  position: relative;
+
+  &::after {
+    content: '';
+    display: block;
+    padding-bottom: 17.61538%;
+  }
+}
+
+.about__content {
+  max-height: 30vh;
+  min-height: 30vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  max-width: calc(57rem + 2 * 3rem);
+  padding: 4rem 3rem 0;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.about__content p {
+  @extend %description-1;
+}
+
+.about__content a {
+  color: $color-regent-st-blue;
+  font-family: $font-audrey;
+  font-weight: 400;
+  font-size: 1.6rem;
 }

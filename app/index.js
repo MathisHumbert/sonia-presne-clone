@@ -12,8 +12,8 @@ class App {
 
     this.createCanvas();
     this.createPages();
-    this.createPreloader();
     this.createNavigation();
+    this.createPreloader();
 
     this.addEventsListeners();
     this.addLinkListeners();
@@ -64,6 +64,7 @@ class App {
   onPreloaded() {
     this.onResize();
 
+    this.navigation.show();
     this.page.show();
     this.canvas.onPreloaded();
   }
@@ -83,7 +84,6 @@ class App {
   }
 
   async onChange({ url, push }) {
-    console.log('onchange');
     this.canvas.onChangeStart(this.template, url);
 
     await this.page.hide();
@@ -112,6 +112,8 @@ class App {
 
       this.page.create();
 
+      this.canvas.gallery.isAnimating = true;
+
       this.createLoader();
 
       this.addLinkListeners();
@@ -127,6 +129,10 @@ class App {
 
     if (this.canvas && this.canvas.onResize) {
       this.canvas.onResize();
+    }
+
+    if (this.navigation && this.navigation.onResize) {
+      this.navigation.onResize();
     }
   }
 

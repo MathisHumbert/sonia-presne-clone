@@ -40,8 +40,14 @@ a {
   text-decoration: none;
 }
 
-.content {
+.content__wrapper {
   @extend %cover;
 
   z-index: z('content');
+}
+
+.content {
+  @extend %cover;
+
+  z-index: 1;
 }
