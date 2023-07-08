@@ -218,6 +218,7 @@ export default class MediaDom {
       autoAlpha: 1,
       duration: 1,
       scale: 0.7,
+      autoAlpha: 0.4,
       ease: 'expo.inOut',
       onUpdate: () => {
         this.media.setSize({

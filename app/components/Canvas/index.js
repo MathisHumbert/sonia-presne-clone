@@ -217,10 +217,6 @@ export default class Canvas {
       this.project.update({ scroll, velocity });
     }
 
-    if (this.about && this.about.update) {
-      this.about.update();
-    }
-
     this.renderer.render(this.scene, this.camera);
   }
 }

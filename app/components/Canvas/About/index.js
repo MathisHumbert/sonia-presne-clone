@@ -50,15 +50,6 @@ export default class About {
   }
 
   /**
-   * Loop.
-   */
-  update() {
-    if (this.background && this.background.update) {
-      this.background.update();
-    }
-  }
-
-  /**
    * Destroy.
    */
   destroy() {

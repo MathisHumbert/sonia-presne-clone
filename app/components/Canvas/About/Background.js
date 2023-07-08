@@ -29,6 +29,7 @@ export default class Background {
       uniforms: {
         uAlpha: { value: 0 },
         uTime: { value: 0 },
+        uColorMix: { value: 1 },
       },
     });
   }
@@ -72,14 +73,5 @@ export default class Background {
     this.screen = screen;
 
     this.createBounds();
-  }
-
-  /**
-   * Loop.
-   */
-  update() {
-    this.time += 0.01;
-
-    this.material.uniforms.uTime.value = this.time;
   }
 }

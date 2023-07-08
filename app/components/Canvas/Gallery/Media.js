@@ -94,6 +94,8 @@ export default class Media {
     this.mesh.scale.y =
       (this.viewport.height * this.bounds.height) / this.screen.height;
 
+    this.mesh.position.z += this.mesh.position.z + 0.01;
+
     this.material.uniforms.uPlaneSizes.value = new THREE.Vector2(
       this.mesh.scale.x,
       this.mesh.scale.y
@@ -119,7 +121,11 @@ export default class Media {
    * Animations.
    */
   show() {
-    gsap.fromTo(this.material.uniforms.uAlpha, { value: 0 }, { value: 1 });
+    gsap.fromTo(
+      this.material.uniforms.uAlpha,
+      { value: 0 },
+      { value: this.template === 'about' ? 0.4 : 1 }
+    );
   }
 
   hide() {
