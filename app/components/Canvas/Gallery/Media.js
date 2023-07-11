@@ -1,8 +1,8 @@
 import * as THREE from 'three';
 import { gsap } from 'gsap';
 
-import vertex from 'shaders/vertex.glsl';
-import fragment from 'shaders/fragment.glsl';
+import vertex from 'shaders/gallery-vertex.glsl';
+import fragment from 'shaders/gallery-fragment.glsl';
 
 export default class Media {
   constructor({ element, index, scene, viewport, screen, geometry, template }) {
@@ -22,6 +22,7 @@ export default class Media {
 
     this.scroll = 0;
     this.extra = 0;
+    this.speed = Number(element.getAttribute('data-speed'));
 
     this.createTexture();
     this.createMaterial();
@@ -67,6 +68,8 @@ export default class Media {
   createMesh() {
     this.mesh = new THREE.Mesh(this.geometry, this.material);
 
+    this.mesh.position.z += this.mesh.position.z + 0.01;
+
     this.scene.add(this.mesh);
   }
 
@@ -93,8 +96,6 @@ export default class Media {
       (this.viewport.width * this.bounds.width) / this.screen.width;
     this.mesh.scale.y =
       (this.viewport.height * this.bounds.height) / this.screen.height;
-
-    this.mesh.position.z += this.mesh.position.z + 0.01;
 
     this.material.uniforms.uPlaneSizes.value = new THREE.Vector2(
       this.mesh.scale.x,
@@ -285,7 +286,7 @@ export default class Media {
     this.updateX(scroll);
 
     if (this.template === 'about') {
-      this.updateY(infinite);
+      this.updateY(infinite * this.speed);
 
       const scaleY = this.mesh.scale.y / 2;
       const sizesY = this.viewport.height / 2;

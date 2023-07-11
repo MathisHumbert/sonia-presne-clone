@@ -1,3 +1,5 @@
+import { map, each } from 'lodash';
+
 import Media from './Media';
 
 export default class Project {
@@ -7,34 +9,45 @@ export default class Project {
     this.screen = screen;
     this.geometry = geometry;
 
-    this.createMedia();
+    this.mediaElements = document.querySelectorAll('.project__wrapper media');
+
+    this.createGallery();
 
     this.onResize({ viewport, screen });
     this.show();
   }
 
-  createMedia() {
-    this.media = new Media({
-      scene: this.scene,
-      viewport: this.viewport,
-      screen: this.screen,
-      geometry: this.geometry,
-    });
+  createGallery() {
+    this.medias = map(
+      this.mediaElements,
+      (element) =>
+        new Media({
+          element: element,
+          scene: this.scene,
+          viewport: this.viewport,
+          screen: this.screen,
+          geometry: this.geometry,
+        })
+    );
   }
 
   /**
    * Animations.
    */
   show() {
-    if (this.media && this.media.show) {
-      this.media.show();
-    }
+    each(this.medias, (media) => {
+      if (media && media.show) {
+        media.show();
+      }
+    });
   }
 
   hide() {
-    if (this.media && this.media.hide) {
-      this.media.hide();
-    }
+    each(this.medias, (media) => {
+      if (media && media.hide) {
+        media.hide();
+      }
+    });
   }
 
   /**
@@ -44,26 +57,32 @@ export default class Project {
     this.viewport = viewport;
     this.screen = screen;
 
-    if (this.media && this.media.onResize) {
-      this.media.onResize({ viewport, screen });
-    }
+    each(this.medias, (media) => {
+      if (media && media.onResize) {
+        media.onResize({ viewport, screen });
+      }
+    });
   }
 
   /**
    * Loop.
    */
-  update({ scroll, velocity }) {
-    if (this.media && this.media.update) {
-      this.media.update({ scroll, velocity });
-    }
+  update({ scroll }) {
+    each(this.medias, (media) => {
+      if (media && media.update) {
+        media.update({ scroll });
+      }
+    });
   }
 
   /**
    * Destroy.
    */
   destroy() {
-    if (this.media) {
-      this.media.mesh.removeFromParent();
-    }
+    each(this.medias, (media) => {
+      if (media) {
+        media.mesh.removeFromParent();
+      }
+    });
   }
 }

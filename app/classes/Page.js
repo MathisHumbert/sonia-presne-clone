@@ -117,16 +117,6 @@ export default class Page {
    * Events.
    */
   onResize() {
-    this.scroll = {
-      position: 0,
-      current: 0,
-      target: 0,
-      limit: 0,
-      last: 0,
-      velocity: 0,
-      ease: 0.05,
-    };
-
     if (this.elements.wrapper) {
       this.scroll.limit =
         this.elements.wrapper.clientHeight - window.innerHeight;
@@ -192,12 +182,6 @@ export default class Page {
       this.elements.wrapper.style[
         this.transformPrefix
       ] = `translateY(-${this.scroll.current}px)`;
-    }
-
-    if (this.elements.scroll) {
-      this.elements.scroll.style[
-        this.transformPrefix
-      ] = `translateY(${this.scroll.current}px)`;
     }
 
     this.scroll.velocity = (this.scroll.current - this.scroll.last) * 0.05;

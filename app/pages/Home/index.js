@@ -21,4 +21,12 @@ export default class Home extends Page {
 
     super.show();
   }
+
+  hide() {
+    this.elements.gallery.classList.remove('active', 'is-overview');
+    this.elements.galleryItems.classList.remove('visible');
+    this.elements.galleryFooter.classList.remove('visible');
+
+    super.hide();
+  }
 }

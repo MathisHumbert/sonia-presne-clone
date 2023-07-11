@@ -36,9 +36,14 @@ export default class Gallery {
       target: 0,
       speed: 0.5,
       last: 0,
+      diff: 0,
       velocity: 0,
       direction: 'up',
       ease: 0.1,
+      scrollCurrent: 0,
+      scrollTarget: 0,
+      scrollLast: 0,
+      scrollDiff: 0,
     };
 
     this.itemWidth = this.screen.height * 0.75;
@@ -49,6 +54,7 @@ export default class Gallery {
     this.filter = 'all';
     this.activeIndex = 0;
     this.time = 0;
+    this.isScrollable = this.template !== 'project';
 
     this.transformPrefix = Prefix('transform');
 
@@ -215,7 +221,7 @@ export default class Gallery {
   }
 
   onTouchDown(event) {
-    if (this.isAnimating) return;
+    if (this.isAnimating || !this.isScrollable) return;
 
     this.isDown = true;
 
@@ -224,7 +230,7 @@ export default class Gallery {
   }
 
   onTouchMove(event) {
-    if (!this.isDown || this.isAnimating) return;
+    if (!this.isDown || this.isAnimating || !this.isScrollable) return;
 
     const x = event.touches ? event.touches[0].clientX : event.clientX;
     const distance = this.start - x;
@@ -233,17 +239,19 @@ export default class Gallery {
   }
 
   onTouchUp() {
-    if (this.isAnimating) return;
+    if (this.isAnimating || !this.isScrollable) return;
 
     this.isDown = false;
   }
 
   onWheel(event) {
-    if (this.isAnimating) return;
+    if (this.isAnimating || !this.isScrollable) return;
+
     const { pixelY } = normalizeWheel(event);
 
     if (this.template === 'about') {
       this.infinite.target += pixelY * 0.1;
+      this.infinite.scrollTarget += pixelY;
 
       if (pixelY > 0 && this.infinite.direction !== 'up') {
         this.infinite.direction = 'up';
@@ -479,7 +487,7 @@ export default class Gallery {
       target: 0,
       last: 0,
       velocity: 0,
-      speed: 2,
+      speed: 0.5,
       ease: 0.1,
       direction: 'up',
     };
@@ -529,11 +537,13 @@ export default class Gallery {
     });
 
     gsap.delayedCall(1, () => {
-      this.isAnimating = false;
-      this.view = 'main';
       this.scroll.limit =
         (this.mediaElementsFiltered.length - 1) *
         (this.mainMediaElementSizes.width + this.mainMediaElementSizes.margin);
+      this.clamp = gsap.utils.clamp(0, this.scroll.limit);
+
+      this.isAnimating = false;
+      this.view = 'main';
     });
   }
 
@@ -638,11 +648,36 @@ export default class Gallery {
       this.infinite.ease
     );
 
+    this.infinite.scrollCurrent = gsap.utils.interpolate(
+      this.infinite.scrollCurrent,
+      this.infinite.scrollTarget,
+      this.infinite.ease
+    );
+
+    let scrollDiff = Math.abs(
+      this.infinite.scrollCurrent - this.infinite.scrollLast
+    );
+
+    if (scrollDiff < 1.5) {
+      scrollDiff = 0;
+    }
+
+    if (scrollDiff > this.infinite.scrollDiff) {
+      this.infinite.scrollDiff = scrollDiff;
+      this.infinite.speed = this.infinite.scrollDiff * 0.02;
+    }
+
+    if (scrollDiff === 0 && this.infinite.scrollDiff !== 0) {
+      this.infinite.scrollDiff = 0;
+    }
+
     this.infinite.velocity = Math.abs(
       (this.infinite.current - this.infinite.last) * 0.1
     );
 
     this.infinite.last = this.infinite.current;
+
+    this.infinite.scrollLast = this.infinite.scrollCurrent;
 
     each(this.medias, (media, index) => {
       if (media && media.update) {

@@ -17,14 +17,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all 0.5s linear;
   pointer-events: none;
 }
 
 .header__nav {
   opacity: 0;
-  transition: color 0.2s linear;
 
-  &--active.visible {
+  &.active.visible {
     opacity: 1;
   }
 }
@@ -59,6 +59,18 @@
 
   a {
     @extend %description-2;
+  }
+}
+
+.header__nav.inverted .header__nav__item {
+  color: $color-white-light;
+
+  &--active {
+    color: $color-white;
+  }
+
+  &:hover {
+    color: $color-regent-st-blue;
   }
 }
 

@@ -5,11 +5,14 @@ import vertex from 'shaders/vertex.glsl';
 import fragment from 'shaders/fragment.glsl';
 
 export default class Media {
-  constructor({ scene, viewport, screen, geometry }) {
+  constructor({ element, scene, viewport, screen, geometry }) {
+    this.element = element;
     this.scene = scene;
     this.viewport = viewport;
     this.screen = screen;
     this.geometry = geometry;
+
+    this.isAnimated = false;
 
     this.createTexture();
     this.createMaterial();
@@ -19,16 +22,29 @@ export default class Media {
   /**
    * Create.
    */
-  createTexture() {}
+  createTexture() {
+    this.imageElement = this.element.querySelector('img');
+
+    const src = this.imageElement.getAttribute('src');
+
+    this.texture = window.TEXTURES[src];
+  }
 
   createMaterial() {
     this.material = new THREE.RawShaderMaterial({
       fragmentShader: fragment,
       vertexShader: vertex,
       transparent: true,
-      wireframe: true,
+      // wireframe: true,
       uniforms: {
         uTexture: { value: this.texture },
+        uImageSizes: {
+          value: new THREE.Vector2(
+            this.imageElement.naturalWidth,
+            this.imageElement.naturalHeight
+          ),
+        },
+        uPlaneSizes: { value: new THREE.Vector2(0, 0) },
         uAlpha: { value: 0 },
       },
     });
@@ -40,7 +56,25 @@ export default class Media {
     this.scene.add(this.mesh);
   }
 
-  createBounds() {}
+  createBounds() {
+    this.bounds = this.element.getBoundingClientRect();
+
+    this.updateScale();
+    this.updateX();
+    this.updateY();
+  }
+
+  createObserver() {
+    this.observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting && !this.isAnimated) {
+          this.animateIn();
+        }
+      });
+    });
+
+    this.observer.observe(this.element);
+  }
 
   /**
    * Update.
@@ -50,6 +84,11 @@ export default class Media {
       (this.viewport.width * this.bounds.width) / this.screen.width;
     this.mesh.scale.y =
       (this.viewport.height * this.bounds.height) / this.screen.height;
+
+    this.material.uniforms.uPlaneSizes.value = new THREE.Vector2(
+      this.mesh.scale.x,
+      this.mesh.scale.y
+    );
   }
 
   updateX(x = 0) {
@@ -70,13 +109,19 @@ export default class Media {
    * Animations.
    */
   show() {
-    gsap.fromTo(this.material.uniforms.uAlpha, { value: 0 }, { value: 1 });
+    this.createObserver();
   }
 
   hide() {
     gsap.to(this.material.uniforms.uAlpha, {
       value: 0,
     });
+  }
+
+  animateIn() {
+    this.isAnimated = true;
+
+    gsap.to(this.material.uniforms.uAlpha, { value: 1, duration: 1 });
   }
 
   /**
@@ -92,5 +137,7 @@ export default class Media {
   /**
    * Loop.
    */
-  update({ scroll, velocity }) {}
+  update({ scroll }) {
+    this.updateY(scroll);
+  }
 }

@@ -22,6 +22,7 @@
   display: flex;
   align-items: flex-end;
   letter-spacing: 0.6em;
+  opacity: 0;
 }
 
 .about__filler {
@@ -47,13 +48,16 @@
   text-align: center;
 }
 
-.about__content p {
+.about__content__text {
   @extend %description-1;
+
+  opacity: 0;
 }
 
-.about__content a {
+.about__content__link {
   color: $color-regent-st-blue;
   font-family: $font-audrey;
   font-weight: 400;
   font-size: 1.6rem;
+  opacity: 0;
 }

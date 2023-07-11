@@ -11,6 +11,7 @@ export default class MediaDom {
     this.mainIndex = Number(element.getAttribute('data-main-index'));
     this.isMain = element.getAttribute('data-main') === 'true';
     this.category = element.getAttribute('data-category');
+    this.wrapperElement = document.getElementById('wrapper');
 
     this.scroll = 0;
 
@@ -63,7 +64,10 @@ export default class MediaDom {
         height: screen.height * 0.6,
         scale: 1,
         translateX: -this.scroll + this.width,
-        translateY: '-50%',
+        translateY:
+          this.template === 'project'
+            ? this.wrapperElement.clientHeight
+            : '-50%',
       });
     } else {
       this.width =

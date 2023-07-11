@@ -2,6 +2,7 @@ import each from 'lodash/each';
 
 import Home from 'pages/Home';
 import About from 'pages/About';
+import Project from 'pages/Project';
 
 import Canvas from 'components/Canvas';
 import Preloader from 'components/Preloader';
@@ -33,6 +34,7 @@ class App {
     this.pages = {
       home: new Home(),
       about: new About(),
+      project: new Project(),
     };
 
     this.page = this.pages[this.template];

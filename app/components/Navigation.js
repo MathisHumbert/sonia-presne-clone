@@ -27,10 +27,16 @@ export default class Navigation extends Component {
 
     if (url.includes('projects')) {
       this.elements.logo.classList.add('header__logo--active');
-      this.elements.nav.classList.remove('header__nav--active');
+      this.elements.nav.classList.remove('active');
     } else {
-      this.elements.nav.classList.add('header__nav--active');
+      this.elements.nav.classList.add('active');
       this.elements.logo.classList.remove('header__logo--active');
+
+      if (url.includes('about')) {
+        this.elements.nav.classList.add('inverted');
+      } else {
+        this.elements.nav.classList.remove('inverted');
+      }
 
       each(this.elements.navItems, (element, index) => {
         if (element.getAttribute('data-page') === url) {

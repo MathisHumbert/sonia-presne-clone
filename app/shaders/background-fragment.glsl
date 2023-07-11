@@ -181,5 +181,5 @@ void main(){
   heightLine = heightLine * .065;
   
   color = color - heightLine * (1. - uColorMix * 2.);
-  gl_FragColor = vec4(color, 1.);
+  gl_FragColor = vec4(color, uAlpha);
 }

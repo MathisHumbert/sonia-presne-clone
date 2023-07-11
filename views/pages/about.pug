@@ -13,4 +13,4 @@ block content
         .about__content__text
           p=about.data.content_top
           p=about.data.content_bottom
-        a(href=about.data.mail_link)=about.data.mail_text 
+        a.about__content__link(href=about.data.mail_link.url)=about.data.mail_text 

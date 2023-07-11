@@ -1,0 +1,80 @@
+extends ../base.pug 
+
+block variables 
+  - var template = 'project'
+
+block content
+  .project
+    .project__wrapper#wrapper
+      .project__hero
+        media.project__hero__media
+          img.project__hero__img(src=project.data.main_img.url, alt="")
+      .project__intro
+        .project__intro__header 
+          span.project__intro__header__subtitle
+            span=project.data.brand_type
+          h1.project__intro__header__title
+            span=project.data.title
+        .project__intro__content
+          p.project__intro__content__text=project.data.description
+      each gallery in project.data.body 
+        section.project__gallery
+          if gallery.primary.type === 'one_classic'
+            .project__gallery__wrapper
+              each item in gallery.items
+                if gallery.primary.is_image
+                  media.project__gallery__media
+                    img.project__gallery__media__img(src=item.image.url, alt="")
+                else
+                  .project__gallery__video
+                    iframe(src=item.video.url, frameborder="0") 
+          if gallery.primary.type === 'two'
+            .project__gallery__wrapper
+              .project__gallery__two
+                each item in gallery.items
+                  if gallery.primary.is_image
+                    media.project__gallery__media
+                      img.project__gallery__media__img(src=item.image.url, alt="")
+                  else
+                    .project__gallery__video
+                      iframe(src=item.video.url, frameborder="0") 
+          if gallery.primary.type === 'three'
+            .project__gallery__wrapper
+              .project__gallery__three
+                each item in gallery.items
+                  if gallery.primary.is_image
+                    media.project__gallery__media
+                      img.project__gallery__media__img(src=item.image.url, alt="")
+                  else
+                    .project__gallery__video
+                      iframe(src=item.video.url, frameborder="0") 
+          if gallery.primary.type === 'four'
+            .project__gallery__wrapper
+              .project__gallery__four
+                each item in gallery.items
+                  if gallery.primary.is_image
+                    media.project__gallery__media
+                      img.project__gallery__media__img(src=item.image.url, alt="")
+                  else
+                    .project__gallery__video
+                      iframe(src=item.video.url, frameborder="0") 
+          if gallery.primary.type === 'five'
+            .project__gallery__wrapper
+              .project__gallery__five
+                each item in gallery.items
+                  if gallery.primary.is_image
+                    media.project__gallery__media
+                      img.project__gallery__media__img(src=item.image.url, alt="")
+                  else
+                    .project__gallery__video
+                      iframe(src=item.video.url, frameborder="0") 
+          if gallery.primary.type === 'six'
+            .project__gallery__wrapper
+              .project__gallery__six
+                each item in gallery.items
+                  if gallery.primary.is_image
+                    media.project__gallery__media
+                      img.project__gallery__media__img(src=item.image.url, alt="")
+                  else
+                    .project__gallery__video
+                      iframe(src=item.video.url, frameborder="0") 

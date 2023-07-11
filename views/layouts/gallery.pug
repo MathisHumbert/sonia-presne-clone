@@ -1,7 +1,7 @@
 .gallery
   .gallery__items
     each item in home.data.body[0].items
-      .gallery__item(data-category=item.category data-brand=item.brand data-title=item.title data-main=`${item.main}` data-main-index=`${item.main_index}`)
+      .gallery__item(data-category=item.category data-brand=item.brand data-title=item.title data-main=`${item.main}` data-main-index=`${item.main_index}` data-speed=item.speed)
         a.gallery__category(href="#")=item.category 
         a.gallery__media__wrapper(href="#")
           media.gallery__media(data-main=`${item.main}`)

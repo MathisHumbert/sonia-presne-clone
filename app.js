@@ -31,6 +31,10 @@ const initApi = (req) => {
 };
 
 const HandleLinkResolver = (doc) => {
+  if (doc.type === 'project') {
+    return `/projects/${doc.uid}`;
+  }
+
   if (doc.type === 'about') {
     return '/about';
   }
@@ -76,6 +80,16 @@ app.get('/about', async (req, res) => {
   const about = await api.getSingle('about');
 
   res.render('pages/about', { ...defaults, about });
+});
+
+app.get('/projects/:id', async (req, res) => {
+  const api = initApi(req);
+
+  const defaults = await handleRequest(api);
+
+  const project = await api.getByUID('project', req.params.id);
+
+  res.render('pages/project', { ...defaults, project });
 });
 
 app.listen(port, () => {
