@@ -1,4 +1,5 @@
 import each from 'lodash/each';
+import normalizeWheel from 'normalize-wheel';
 
 import Home from 'pages/Home';
 import About from 'pages/About';
@@ -169,12 +170,14 @@ class App {
   }
 
   onWheel(event) {
+    const { pixelY } = normalizeWheel(event);
+
     if (this.page && this.page.onWheel) {
-      this.page.onWheel(event);
+      this.page.onWheel({ pixelY });
     }
 
     if (this.canvas && this.canvas.onWheel) {
-      this.canvas.onWheel(event);
+      this.canvas.onWheel({ pixelY });
     }
   }
 

@@ -199,9 +199,9 @@ export default class Canvas {
     }
   }
 
-  onWheel(event) {
+  onWheel({ pixelY }) {
     if (this.gallery && this.gallery.onWheel) {
-      this.gallery.onWheel(event);
+      this.gallery.onWheel({ pixelY });
     }
   }
 

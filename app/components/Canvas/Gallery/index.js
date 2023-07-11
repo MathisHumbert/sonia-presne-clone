@@ -1,5 +1,4 @@
 import { gsap } from 'gsap';
-import normalizeWheel from 'normalize-wheel';
 import Prefix from 'prefix';
 import { map, each, filter, findIndex } from 'lodash';
 
@@ -244,10 +243,8 @@ export default class Gallery {
     this.isDown = false;
   }
 
-  onWheel(event) {
+  onWheel({ pixelY }) {
     if (this.isAnimating || !this.isScrollable) return;
-
-    const { pixelY } = normalizeWheel(event);
 
     if (this.template === 'about') {
       this.infinite.target += pixelY * 0.1;

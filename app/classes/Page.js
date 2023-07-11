@@ -1,6 +1,5 @@
 import { gsap } from 'gsap';
 import Prefix from 'prefix';
-import normalizeWheel from 'normalize-wheel';
 import each from 'lodash/each';
 
 import detection from 'classes/Detection';
@@ -150,10 +149,8 @@ export default class Page {
     this.isDown = false;
   }
 
-  onWheel(event) {
+  onWheel({ pixelY }) {
     if (!this.isVisible || !this.isScrollable) return;
-
-    const { pixelY } = normalizeWheel(event);
 
     this.scroll.target += pixelY;
   }

@@ -6,6 +6,7 @@ block variables
 block content
   .project
     .project__wrapper#wrapper
+      //- .project__test
       .project__hero
         media.project__hero__media
           img.project__hero__img(src=project.data.main_img.url, alt="")
@@ -27,7 +28,7 @@ block content
                     img.project__gallery__media__img(src=item.image.url, alt="")
                 else
                   .project__gallery__video
-                    iframe(src=item.video.url, frameborder="0") 
+                    //- iframe(src=item.video.url, frameborder="0") 
           if gallery.primary.type === 'two'
             .project__gallery__wrapper
               .project__gallery__two
@@ -37,7 +38,7 @@ block content
                       img.project__gallery__media__img(src=item.image.url, alt="")
                   else
                     .project__gallery__video
-                      iframe(src=item.video.url, frameborder="0") 
+                      //- iframe(src=item.video.url, frameborder="0") 
           if gallery.primary.type === 'three'
             .project__gallery__wrapper
               .project__gallery__three
@@ -47,7 +48,7 @@ block content
                       img.project__gallery__media__img(src=item.image.url, alt="")
                   else
                     .project__gallery__video
-                      iframe(src=item.video.url, frameborder="0") 
+                      //- iframe(src=item.video.url, frameborder="0") 
           if gallery.primary.type === 'four'
             .project__gallery__wrapper
               .project__gallery__four
@@ -57,7 +58,7 @@ block content
                       img.project__gallery__media__img(src=item.image.url, alt="")
                   else
                     .project__gallery__video
-                      iframe(src=item.video.url, frameborder="0") 
+                      //- iframe(src=item.video.url, frameborder="0") 
           if gallery.primary.type === 'five'
             .project__gallery__wrapper
               .project__gallery__five
@@ -67,7 +68,7 @@ block content
                       img.project__gallery__media__img(src=item.image.url, alt="")
                   else
                     .project__gallery__video
-                      iframe(src=item.video.url, frameborder="0") 
+                      //- iframe(src=item.video.url, frameborder="0") 
           if gallery.primary.type === 'six'
             .project__gallery__wrapper
               .project__gallery__six
@@ -77,4 +78,4 @@ block content
                       img.project__gallery__media__img(src=item.image.url, alt="")
                   else
                     .project__gallery__video
-                      iframe(src=item.video.url, frameborder="0") 
+                      //- iframe(src=item.video.url, frameborder="0") 
