@@ -13,14 +13,10 @@ export default class Preloader {
   }
 
   preload(content, onLoaded) {
-    const soniaImage = new Image();
-    soniaImage.crossOrigin = 'anonymous';
-    soniaImage.src = 'logo-alpha.jpg';
-
     const contentImages = content.querySelectorAll('img');
     const galleryImages = document.querySelectorAll('.gallery__media__img');
 
-    const images = [...contentImages, ...galleryImages, soniaImage];
+    const images = [...contentImages, ...galleryImages];
 
     this.loadedTextureUrl.push(window.location.pathname);
 

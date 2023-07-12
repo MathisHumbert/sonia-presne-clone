@@ -89,6 +89,8 @@ app.get('/projects/:id', async (req, res) => {
 
   const project = await api.getByUID('project', req.params.id);
 
+  console.log(project.data.description[0].spans);
+
   res.render('pages/project', { ...defaults, project });
 });
 

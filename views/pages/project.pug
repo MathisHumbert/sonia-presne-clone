@@ -6,7 +6,6 @@ block variables
 block content
   .project
     .project__wrapper#wrapper
-      //- .project__test
       .project__hero
         media.project__hero__media
           img.project__hero__img(src=project.data.main_img.url, alt="")
@@ -17,9 +16,17 @@ block content
           h1.project__intro__header__title
             span=project.data.title
         .project__intro__content
-          p.project__intro__content__text=project.data.description
+          .project__intro__content__text!=PrismicH.asHTML(project.data.description)
       each gallery in project.data.body 
         section.project__gallery
+          if gallery.primary.type === 'one_full'
+            each item in gallery.items
+              if gallery.primary.is_image
+                media.project__gallery__media
+                  img.project__gallery__media__img(src=item.image.url, alt="")
+              else
+                .project__gallery__video
+                  video(src=item.video.url playsinline='' muted='' loop='' autoplay='')
           if gallery.primary.type === 'one_classic'
             .project__gallery__wrapper
               each item in gallery.items
@@ -28,7 +35,7 @@ block content
                     img.project__gallery__media__img(src=item.image.url, alt="")
                 else
                   .project__gallery__video
-                    //- iframe(src=item.video.url, frameborder="0") 
+                    video(src=item.video.url playsinline='' muted='' loop='' autoplay='')
           if gallery.primary.type === 'two'
             .project__gallery__wrapper
               .project__gallery__two
@@ -38,7 +45,7 @@ block content
                       img.project__gallery__media__img(src=item.image.url, alt="")
                   else
                     .project__gallery__video
-                      //- iframe(src=item.video.url, frameborder="0") 
+                      video(src=item.video.url playsinline='' muted='' loop='' autoplay='')
           if gallery.primary.type === 'three'
             .project__gallery__wrapper
               .project__gallery__three
@@ -48,7 +55,7 @@ block content
                       img.project__gallery__media__img(src=item.image.url, alt="")
                   else
                     .project__gallery__video
-                      //- iframe(src=item.video.url, frameborder="0") 
+                      video(src=item.video.url playsinline='' muted='' loop='' autoplay='')
           if gallery.primary.type === 'four'
             .project__gallery__wrapper
               .project__gallery__four
@@ -58,7 +65,7 @@ block content
                       img.project__gallery__media__img(src=item.image.url, alt="")
                   else
                     .project__gallery__video
-                      //- iframe(src=item.video.url, frameborder="0") 
+                      video(src=item.video.url playsinline='' muted='' loop='' autoplay='')
           if gallery.primary.type === 'five'
             .project__gallery__wrapper
               .project__gallery__five
@@ -68,7 +75,7 @@ block content
                       img.project__gallery__media__img(src=item.image.url, alt="")
                   else
                     .project__gallery__video
-                      //- iframe(src=item.video.url, frameborder="0") 
+                      video(src=item.video.url playsinline='' muted='' loop='' autoplay='')
           if gallery.primary.type === 'six'
             .project__gallery__wrapper
               .project__gallery__six
@@ -78,4 +85,4 @@ block content
                       img.project__gallery__media__img(src=item.image.url, alt="")
                   else
                     .project__gallery__video
-                      //- iframe(src=item.video.url, frameborder="0") 
+                      video(src=item.video.url playsinline='' muted='' loop='' autoplay='')
