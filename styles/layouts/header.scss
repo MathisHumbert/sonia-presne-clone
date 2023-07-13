@@ -41,7 +41,7 @@
   pointer-events: all;
   transition: color 0.2s linear;
 
-  &--active {
+  &.active {
     color: $color-port-gore;
   }
 
@@ -57,7 +57,7 @@
 .header__nav.inverted .header__nav__item {
   color: $color-white-light;
 
-  &--active {
+  &.active {
     color: $color-white;
   }
 
@@ -85,7 +85,7 @@
   opacity: 0;
   mix-blend-mode: difference;
 
-  &--active {
+  &.active {
     opacity: 1;
   }
 
@@ -93,7 +93,7 @@
     pointer-events: none;
   }
 
-  &--active a {
+  &.active a {
     pointer-events: all;
   }
 }

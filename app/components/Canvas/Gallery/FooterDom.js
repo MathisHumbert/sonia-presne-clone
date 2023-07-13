@@ -6,8 +6,8 @@ import Component from 'classes/Component';
 export default class FooterDom extends Component {
   constructor({ onButtonViewClick, onButtonFilterClick }) {
     super({
+      element: '.gallery__footer',
       elements: {
-        element: '.gallery__footer',
         buttonView: '.gallery__footer__view__button',
         counterCurrent: '.gallery__footer__counter__current',
         counterTotal: '.gallery__footer__counter__total',
@@ -126,5 +126,13 @@ export default class FooterDom extends Component {
         this.onFilterClick({ filterElement: element, index: index })
       );
     });
+  }
+
+  show() {
+    this.element.classList.add('visible');
+  }
+
+  hide() {
+    this.element.classList.remove('visible');
   }
 }

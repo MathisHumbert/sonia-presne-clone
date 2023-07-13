@@ -1,5 +1,7 @@
 import each from 'lodash/each';
 import normalizeWheel from 'normalize-wheel';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/all';
 
 import Home from 'pages/Home';
 import About from 'pages/About';
@@ -8,12 +10,15 @@ import Project from 'pages/Project';
 import Canvas from 'components/Canvas';
 import Preloader from 'components/Preloader';
 import Navigation from 'components/Navigation';
+
+gsap.registerPlugin(ScrollTrigger);
+
 class App {
   constructor() {
     this.createContent();
 
-    this.createCanvas();
     this.createPages();
+    this.createCanvas();
     this.createNavigation();
     this.createPreloader();
 
@@ -40,11 +45,13 @@ class App {
 
     this.page = this.pages[this.template];
 
+    this.createScrollTrigger();
+
     this.page.create(true);
   }
 
   createCanvas() {
-    this.canvas = new Canvas({ template: this.template });
+    this.canvas = new Canvas({ template: this.template, page: this.page });
   }
 
   createNavigation() {
@@ -59,6 +66,28 @@ class App {
 
   createLoader() {
     this.preloader.load(this.content, this.onLoaded.bind(this));
+  }
+
+  createScrollTrigger() {
+    ScrollTrigger.scrollerProxy('#wrapper', {
+      scrollTop: (value) => {
+        if (arguments.length) {
+          this.page.scroll.current = value;
+        }
+        return this.page.scroll.current;
+      },
+
+      getBoundingClientRect() {
+        return {
+          top: 0,
+          left: 0,
+          width: window.innerWidth,
+          height: window.innerHeight,
+        };
+      },
+    });
+
+    ScrollTrigger.defaults({ scroller: '#wrapper' });
   }
 
   /**
@@ -76,7 +105,7 @@ class App {
     this.onResize();
 
     this.page.show();
-    this.canvas.onLoaded(this.template);
+    this.canvas.onLoaded(this.template, this.page);
   }
 
   onPopState() {
@@ -87,6 +116,8 @@ class App {
   }
 
   async onChange({ url, push }) {
+    ScrollTrigger.getAll().forEach((t) => t.kill());
+
     this.canvas.onChangeStart(this.template, url);
 
     await this.page.hide();
@@ -110,6 +141,8 @@ class App {
 
       this.content.innerHTML = divContent.innerHTML;
       this.content.setAttribute('data-template', this.template);
+
+      this.createScrollTrigger();
 
       this.page = this.pages[this.template];
 
@@ -192,7 +225,7 @@ class App {
     if (this.canvas && this.canvas.update) {
       this.canvas.update({
         scroll: this.page.scroll.current,
-        velocity: this.page.scroll.velocity,
+        pageScrollable: this.page.isScrollable,
       });
     }
 

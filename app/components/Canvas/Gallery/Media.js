@@ -21,6 +21,7 @@ export default class Media {
     );
 
     this.scroll = 0;
+    this.pageScroll = 0;
     this.extra = 0;
     this.speed = Number(element.getAttribute('data-speed'));
 
@@ -77,7 +78,7 @@ export default class Media {
     const rect = this.element.getBoundingClientRect();
 
     this.bounds = {
-      top: rect.top,
+      top: rect.top + this.pageScroll,
       left: rect.left + this.scroll,
       width: rect.width,
       height: rect.height,
@@ -165,7 +166,7 @@ export default class Media {
     const rect = this.element.getBoundingClientRect();
 
     this.bounds = {
-      top: rect.top,
+      top: rect.top + this.pageScroll,
       left: rect.left + scroll,
       width: rect.width,
       height: rect.height,
@@ -189,7 +190,8 @@ export default class Media {
       y:
         this.viewport.height / 2 -
         scaleY / 2 -
-        ((this.bounds.top - 0) / this.screen.height) * this.viewport.height,
+        ((this.bounds.top - this.pageScroll) / this.screen.height) *
+          this.viewport.height,
     });
 
     gsap.set(this.material.uniforms.uAlpha, { value: uAlpha });
@@ -199,7 +201,7 @@ export default class Media {
     const rect = this.element.getBoundingClientRect();
 
     this.bounds = {
-      top: rect.top,
+      top: rect.top + this.pageScroll,
       left: rect.left + scroll,
       width: rect.width,
       height: rect.height,
@@ -236,7 +238,8 @@ export default class Media {
           y:
             this.viewport.height / 2 -
             scaleY / 2 -
-            ((this.bounds.top - 0) / this.screen.height) * this.viewport.height,
+            ((this.bounds.top - this.pageScroll) / this.screen.height) *
+              this.viewport.height,
         },
         0
       )
@@ -277,13 +280,19 @@ export default class Media {
   /**
    * Loop.
    */
-  update({ scroll, infinite, velocity, direction, time }) {
+  update({ pageScroll, scroll, infinite, velocity, direction, time }) {
     this.scroll = scroll;
 
     this.material.uniforms.uTime.value = time;
     this.material.uniforms.uWind.value = 2 + velocity;
 
     this.updateX(scroll);
+
+    if (pageScroll && pageScroll !== 0) {
+      this.pageScroll = pageScroll;
+
+      this.updateY(pageScroll);
+    }
 
     if (this.template === 'about') {
       this.updateY(infinite * this.speed);

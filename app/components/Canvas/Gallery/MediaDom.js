@@ -54,6 +54,8 @@ export default class MediaDom {
         translateY: this.aboutTranslateY,
       });
     } else if (view === 'main') {
+      // adapt translateY to pageScroll if we are in project page
+
       this.width =
         (this.mainMediaElementSizes.width + this.mainMediaElementSizes.margin) *
           index -
@@ -66,7 +68,7 @@ export default class MediaDom {
         translateX: -this.scroll + this.width,
         translateY:
           this.template === 'project'
-            ? this.wrapperElement.clientHeight
+            ? this.wrapperElement.clientHeight - this.screen.height
             : '-50%',
       });
     } else {
@@ -89,15 +91,26 @@ export default class MediaDom {
     if (!this.isMain) {
       this.allMediaElementSizes = allMediaElementSizes;
 
-      gsap.set(this.element, {
-        width: this.screen.height * 0.42,
-        height: this.screen.height * 0.6,
-        scale: 1,
-        translateX: startX,
-        translateY: '-50%',
-        autoAlpha: 0,
-        onComplete: () => this.media.setSize({ scroll, uAlpha: 0 }),
-      });
+      if (this.template === 'home') {
+        gsap.set(this.element, {
+          width: this.screen.height * 0.42,
+          height: this.screen.height * 0.6,
+          scale: 1,
+          translateX: startX,
+          translateY: '-50%',
+          autoAlpha: 0,
+          onComplete: () => this.media.setSize({ scroll, uAlpha: 0 }),
+        });
+      } else {
+        gsap.set(this.element, {
+          width: this.screen.height * 0.42,
+          height: this.screen.height * 0.6,
+          scale: 1,
+          translateX: startX,
+          autoAlpha: 0,
+          onComplete: () => this.media.setSize({ scroll, uAlpha: 0 }),
+        });
+      }
     }
 
     this.width =
@@ -108,7 +121,6 @@ export default class MediaDom {
     gsap.to(this.element, {
       scale: 0.7,
       translateX: -scroll + this.width,
-      translateY: '-50%',
       autoAlpha: 1,
       duration: 1,
       ease: 'expo.inOut',

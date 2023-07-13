@@ -1,6 +1,7 @@
 import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/all';
 import Prefix from 'prefix';
-import each from 'lodash/each';
+import { clamp, each } from 'lodash';
 
 import detection from 'classes/Detection';
 
@@ -22,7 +23,6 @@ export default class Page {
       velocity: 0,
       ease: 0.1,
     };
-    this.clamp = gsap.utils.clamp(0, this.scroll.limit);
 
     this.isDown = false;
     this.isVisible = false;
@@ -48,8 +48,6 @@ export default class Page {
       velocity: 0,
       ease: 0.05,
     };
-
-    this.clamp = gsap.utils.clamp(0, this.scroll.limit);
 
     each(this.selectorChildren, (entry, key) => {
       if (
@@ -117,10 +115,11 @@ export default class Page {
    */
   onResize() {
     if (this.elements.wrapper) {
+      this.galleryStart =
+        this.elements.wrapper.clientHeight - window.innerHeight * 1.33;
+
       this.scroll.limit =
         this.elements.wrapper.clientHeight - window.innerHeight;
-
-      this.clamp = gsap.utils.clamp(0, this.scroll.limit);
     }
   }
 
@@ -161,7 +160,7 @@ export default class Page {
   update() {
     if (!this.isVisible || !this.isScrollable) return;
 
-    this.scroll.target = this.clamp(this.scroll.target);
+    this.scroll.target = clamp(this.scroll.target, 0, this.scroll.limit);
 
     this.scroll.current = gsap.utils.interpolate(
       this.scroll.current,
@@ -181,9 +180,19 @@ export default class Page {
       ] = `translateY(-${this.scroll.current}px)`;
     }
 
+    if (this.elements.galleryItems) {
+      each(this.elements.galleryItems, (item) => {
+        gsap.set(item, {
+          translateY: this.galleryStart - this.scroll.current,
+        });
+      });
+    }
+
     this.scroll.velocity = (this.scroll.current - this.scroll.last) * 0.05;
 
     this.scroll.last = this.scroll.current;
+
+    ScrollTrigger.update();
   }
 
   /**

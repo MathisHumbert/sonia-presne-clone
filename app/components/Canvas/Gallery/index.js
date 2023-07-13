@@ -8,16 +8,19 @@ import FooterDom from './FooterDom';
 import Logo from './Logo';
 
 export default class Gallery {
-  constructor({ scene, viewport, screen, geometry, template }) {
+  constructor({ scene, viewport, screen, geometry, template, page }) {
     this.scene = scene;
     this.viewport = viewport;
     this.screen = screen;
     this.geometry = geometry;
     this.template = template;
+    this.page = page;
 
     this.galleryElement = document.querySelector('.gallery');
     this.galleryItemElements = document.querySelectorAll('.gallery__item');
     this.logoElement = document.querySelector('.logo__one');
+    this.headerLogoElement = document.querySelector('.header__logo');
+    this.headerNavElement = document.querySelector('.header__nav');
 
     this.scroll = {
       position: 0,
@@ -54,6 +57,7 @@ export default class Gallery {
     this.activeIndex = 0;
     this.time = 0;
     this.isScrollable = this.template !== 'project';
+    this.pageScroll = null;
 
     this.transformPrefix = Prefix('transform');
 
@@ -564,7 +568,7 @@ export default class Gallery {
   /**
    * Loop.
    */
-  update() {
+  update({ scroll, pageScrollable }) {
     if (this.isAnimating) return;
 
     this.time += 0.01;
@@ -572,11 +576,38 @@ export default class Gallery {
     if (this.template === 'about') {
       this.aboutUpdate();
     } else {
-      this.normalUpdate();
+      this.normalUpdate({ scroll, pageScrollable });
     }
   }
 
-  normalUpdate() {
+  normalUpdate({ scroll, pageScrollable }) {
+    if (this.template === 'project') {
+      if (!pageScrollable && !this.isScrollable) {
+        this.isScrollable = true;
+
+        this.footerDom.show();
+
+        this.headerLogoElement.classList.remove('active');
+        gsap.delayedCall(0.5, () =>
+          this.headerNavElement.classList.add('active')
+        );
+      } else if (
+        this.isScrollable &&
+        this.scroll.target < 0 &&
+        this.view === 'main'
+      ) {
+        this.isScrollable = false;
+        this.page.isScrollable = true;
+
+        this.footerDom.hide();
+
+        this.headerNavElement.classList.remove('active');
+        gsap.delayedCall(0.5, () =>
+          this.headerLogoElement.classList.add('active')
+        );
+      }
+    }
+
     this.scroll.target = this.clamp(this.scroll.target);
 
     this.scroll.current = gsap.utils.interpolate(
@@ -599,6 +630,10 @@ export default class Gallery {
 
     let index = this.activeIndex;
 
+    if (scroll && scroll !== 0) {
+      this.pageScroll = scroll + this.screen.height * 0.33;
+    }
+
     if (this.view === 'main') {
       index = Math.round(
         this.scroll.current / this.mainMediaElementSizes.total
@@ -616,6 +651,7 @@ export default class Gallery {
     each(this.medias, (media) => {
       if (media && media.update) {
         media.update({
+          pageScroll: this.pageScroll,
           scroll: this.scroll.current,
           velocity: this.scroll.velocity,
           time: this.time,

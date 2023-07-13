@@ -2,11 +2,11 @@
   .gallery__items
     each item in home.data.body[0].items
       .gallery__item(data-category=item.category data-brand=item.brand data-title=item.title data-main=`${item.main}` data-main-index=`${item.main_index}` data-speed=item.speed)
-        a.gallery__category(href="#")=item.category 
-        a.gallery__media__wrapper(href="#")
+        a.gallery__category(href=Link(item.link))=item.category 
+        a.gallery__media__wrapper(href=Link(item.link))
           media.gallery__media(data-main=`${item.main}`)
             img(src=item.image.url, alt="").gallery__media__img
-        a.gallery__title(href="#")=item.title 
+        a.gallery__title(href=Link(item.link))=item.title 
   .gallery__footer
     .gallery__footer__view
       button.gallery__footer__view__button

@@ -4,8 +4,9 @@ import Gallery from './Gallery';
 import Project from './Project';
 import About from './About';
 export default class Canvas {
-  constructor({ template }) {
+  constructor({ template, page }) {
     this.template = template;
+    this.page = page;
 
     this.createScene();
     this.createCamera();
@@ -51,13 +52,14 @@ export default class Canvas {
   /**
    * Gallery.
    */
-  createGallery(template) {
+  createGallery(template, page) {
     this.gallery = new Gallery({
       scene: this.scene,
       viewport: this.viewport,
       screen: this.screen,
       geometry: this.geometry,
       template,
+      page,
     });
   }
 
@@ -103,11 +105,11 @@ export default class Canvas {
    * Events.
    */
   onPreloaded() {
-    this.onChangeEnd(this.template);
+    this.onChangeEnd(this.template, this.page);
   }
 
-  onLoaded(template) {
-    this.onChangeEnd(template);
+  onLoaded(template, page) {
+    this.onChangeEnd(template, page);
   }
 
   onChangeStart(template, url) {
@@ -120,7 +122,7 @@ export default class Canvas {
     }
   }
 
-  onChangeEnd(template) {
+  onChangeEnd(template, page) {
     if (this.about) {
       this.destroyAbout();
     }
@@ -138,8 +140,10 @@ export default class Canvas {
     }
 
     if (!this.gallery) {
-      this.createGallery(template);
+      this.createGallery(template, page);
     } else {
+      this.gallery.page = page;
+
       if (this.template === 'home' && template === 'about') {
         this.gallery.onHomeToAbout();
       } else if (this.template === 'about' && template === 'home') {
@@ -148,6 +152,8 @@ export default class Canvas {
     }
 
     this.template = template;
+    this.page = page;
+
     this.onResize();
   }
 
@@ -208,13 +214,13 @@ export default class Canvas {
   /**
    * Loop.
    */
-  update({ scroll, velocity }) {
+  update({ scroll, pageScrollable }) {
     if (this.gallery && this.gallery.update) {
-      this.gallery.update({ scroll, velocity });
+      this.gallery.update({ scroll, pageScrollable });
     }
 
     if (this.project && this.project.update) {
-      this.project.update({ scroll, velocity });
+      this.project.update({ scroll });
     }
 
     this.renderer.render(this.scene, this.camera);

@@ -17,6 +17,11 @@ block content
             span=project.data.title
         .project__intro__content
           .project__intro__content__text!=PrismicH.asHTML(project.data.description)
+        if project.data.awards.length > 0
+          .project__intro__awards
+            each award in project.data.awards 
+              .project__intro__award 
+                img.project__intro__award__img(src=award.image.url, alt="")
       each gallery in project.data.body 
         section.project__gallery
           if gallery.primary.type === 'one_full'
@@ -36,9 +41,28 @@ block content
                 else
                   .project__gallery__video
                     video(src=item.video.url playsinline='' muted='' loop='' autoplay='')
+          if gallery.primary.type === 'one_small'
+            .project__gallery__wrapper.small
+              each item in gallery.items
+                if gallery.primary.is_image
+                  media.project__gallery__media
+                    img.project__gallery__media__img(src=item.image.url, alt="")
+                else
+                  .project__gallery__video
+                    video(src=item.video.url playsinline='' muted='' loop='' autoplay='')
           if gallery.primary.type === 'two'
             .project__gallery__wrapper
               .project__gallery__two
+                each item in gallery.items
+                  if gallery.primary.is_image
+                    media.project__gallery__media
+                      img.project__gallery__media__img(src=item.image.url, alt="")
+                  else
+                    .project__gallery__video
+                      video(src=item.video.url playsinline='' muted='' loop='' autoplay='')
+          if gallery.primary.type === 'two_no_margin'
+            .project__gallery__wrapper
+              .project__gallery__two--no-margin
                 each item in gallery.items
                   if gallery.primary.is_image
                     media.project__gallery__media
@@ -56,9 +80,9 @@ block content
                   else
                     .project__gallery__video
                       video(src=item.video.url playsinline='' muted='' loop='' autoplay='')
-          if gallery.primary.type === 'four'
+          if gallery.primary.type === 'nine'
             .project__gallery__wrapper
-              .project__gallery__four
+              .project__gallery__nine
                 each item in gallery.items
                   if gallery.primary.is_image
                     media.project__gallery__media
@@ -66,23 +90,4 @@ block content
                   else
                     .project__gallery__video
                       video(src=item.video.url playsinline='' muted='' loop='' autoplay='')
-          if gallery.primary.type === 'five'
-            .project__gallery__wrapper
-              .project__gallery__five
-                each item in gallery.items
-                  if gallery.primary.is_image
-                    media.project__gallery__media
-                      img.project__gallery__media__img(src=item.image.url, alt="")
-                  else
-                    .project__gallery__video
-                      video(src=item.video.url playsinline='' muted='' loop='' autoplay='')
-          if gallery.primary.type === 'six'
-            .project__gallery__wrapper
-              .project__gallery__six
-                each item in gallery.items
-                  if gallery.primary.is_image
-                    media.project__gallery__media
-                      img.project__gallery__media__img(src=item.image.url, alt="")
-                  else
-                    .project__gallery__video
-                      video(src=item.video.url playsinline='' muted='' loop='' autoplay='')
+      .project__space

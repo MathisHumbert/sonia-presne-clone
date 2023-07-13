@@ -26,11 +26,16 @@ export default class Navigation extends Component {
     const url = window.location.pathname;
 
     if (url.includes('projects')) {
-      this.elements.logo.classList.add('header__logo--active');
+      this.elements.logo.classList.add('active');
       this.elements.nav.classList.remove('active');
+
+      this.elements.navItems[0].classList.add('active');
+      this.elements.navDot.style.transform = `translateX(${`-${
+        this.elements.navItems[0].clientWidth / 2
+      }px`})`;
     } else {
       this.elements.nav.classList.add('active');
-      this.elements.logo.classList.remove('header__logo--active');
+      this.elements.logo.classList.remove('active');
 
       if (url.includes('about')) {
         this.elements.nav.classList.add('inverted');
@@ -43,7 +48,7 @@ export default class Navigation extends Component {
           this.activeElement = element;
           this.activeIndex = index;
 
-          element.classList.add('header__nav__item--active');
+          element.classList.add('active');
 
           this.elements.navDot.style.transform = `translateX(${
             index === 0
@@ -51,7 +56,7 @@ export default class Navigation extends Component {
               : `${element.clientWidth / 2}px`
           })`;
         } else {
-          element.classList.remove('header__nav__item--active');
+          element.classList.remove('active');
         }
       });
     }
