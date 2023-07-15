@@ -148,13 +148,13 @@ export default class Canvas {
         this.gallery.onHomeToAbout();
       } else if (this.template === 'about' && template === 'home') {
         this.gallery.onAboutToHome();
+      } else if (this.template === 'project' && template === 'home') {
+        this.gallery.onProjectToHome();
       }
     }
 
     this.template = template;
     this.page = page;
-
-    this.onResize();
   }
 
   onResize() {

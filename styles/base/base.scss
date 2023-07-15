@@ -52,3 +52,12 @@ a {
 
   z-index: 1;
 }
+
+[data-animation='title'] {
+  will-change: transform, opacity;
+}
+
+[data-animation='paragraph'] span {
+  display: inline-block;
+  will-change: transform, opacity;
+}

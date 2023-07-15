@@ -32,6 +32,7 @@ export default class MediaDom {
     allMediaElementSizes,
     aboutMediaElementSizes,
     view,
+    galleryY,
     index,
   }) {
     this.screen = screen;
@@ -54,8 +55,6 @@ export default class MediaDom {
         translateY: this.aboutTranslateY,
       });
     } else if (view === 'main') {
-      // adapt translateY to pageScroll if we are in project page
-
       this.width =
         (this.mainMediaElementSizes.width + this.mainMediaElementSizes.margin) *
           index -
@@ -66,10 +65,7 @@ export default class MediaDom {
         height: screen.height * 0.6,
         scale: 1,
         translateX: -this.scroll + this.width,
-        translateY:
-          this.template === 'project'
-            ? this.wrapperElement.clientHeight - this.screen.height
-            : '-50%',
+        translateY: this.template === 'project' ? galleryY : '-50%',
       });
     } else {
       this.width =
@@ -82,55 +78,64 @@ export default class MediaDom {
         height: screen.height * 0.6,
         scale: 0.7,
         translateX: -this.scroll + this.width,
-        translateY: '-50%',
+        translateY: this.template === 'project' ? galleryY : '-50%',
       });
     }
   }
 
   changeSizeFromMainToAll({ scroll, startX, allMediaElementSizes, index }) {
-    if (!this.isMain) {
-      this.allMediaElementSizes = allMediaElementSizes;
-
-      if (this.template === 'home') {
-        gsap.set(this.element, {
-          width: this.screen.height * 0.42,
-          height: this.screen.height * 0.6,
-          scale: 1,
-          translateX: startX,
-          translateY: '-50%',
-          autoAlpha: 0,
-          onComplete: () => this.media.setSize({ scroll, uAlpha: 0 }),
-        });
-      } else {
-        gsap.set(this.element, {
-          width: this.screen.height * 0.42,
-          height: this.screen.height * 0.6,
-          scale: 1,
-          translateX: startX,
-          autoAlpha: 0,
-          onComplete: () => this.media.setSize({ scroll, uAlpha: 0 }),
-        });
-      }
-    }
+    this.allMediaElementSizes = allMediaElementSizes;
 
     this.width =
       (this.allMediaElementSizes.width + this.allMediaElementSizes.margin) *
         index -
       this.allMediaElementSizes.width * 0.7;
 
-    gsap.to(this.element, {
-      scale: 0.7,
-      translateX: -scroll + this.width,
-      autoAlpha: 1,
-      duration: 1,
-      ease: 'expo.inOut',
-      onUpdate: () => {
-        this.media.setSize({
-          scroll,
-          uAlpha: gsap.getProperty(this.element, 'autoAlpha'),
-        });
-      },
-    });
+    if (!this.isMain) {
+      gsap.fromTo(
+        this.element,
+        {
+          width: this.screen.height * 0.42,
+          height: this.screen.height * 0.6,
+          scale: 1,
+          translateX: startX,
+          translateY: '-50%',
+          autoAlpha: 0,
+          onComplete: () => {
+            this.media.setSize({ scroll, uAlpha: 0 });
+          },
+        },
+        {
+          scale: 0.7,
+          translateX: -scroll + this.width,
+          translateY: '-50%',
+          autoAlpha: 1,
+          duration: 1,
+          ease: 'expo.inOut',
+          onUpdate: () => {
+            this.media.setSize({
+              scroll,
+              uAlpha: gsap.getProperty(this.element, 'autoAlpha'),
+            });
+          },
+        }
+      );
+    } else {
+      gsap.to(this.element, {
+        scale: 0.7,
+        translateX: -scroll + this.width,
+        translateY: '-50%',
+        autoAlpha: 1,
+        duration: 1,
+        ease: 'expo.inOut',
+        onUpdate: () => {
+          this.media.setSize({
+            scroll,
+            uAlpha: gsap.getProperty(this.element, 'autoAlpha'),
+          });
+        },
+      });
+    }
   }
 
   changeSizeFromAllToMain({ scroll, endX }) {

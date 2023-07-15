@@ -18,7 +18,6 @@ export default class Project extends Page {
   }
 
   show() {
-    this.elements.gallery.classList.add('active');
     this.elements.logoThree.classList.add('active');
     this.elements.logoOne.classList.remove('active');
 

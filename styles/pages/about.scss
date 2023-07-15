@@ -22,7 +22,6 @@
   display: flex;
   align-items: flex-end;
   letter-spacing: 0.6em;
-  opacity: 0;
 }
 
 .about__filler {
@@ -50,8 +49,6 @@
 
 .about__content__text {
   @extend %description-1;
-
-  opacity: 0;
 }
 
 .about__content__link {
@@ -59,5 +56,4 @@
   font-family: $font-audrey;
   font-weight: 400;
   font-size: 1.6rem;
-  opacity: 0;
 }

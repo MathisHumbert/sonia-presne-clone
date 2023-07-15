@@ -1,8 +1,8 @@
 import * as THREE from 'three';
 import { gsap } from 'gsap';
 
-import vertex from 'shaders/gallery-vertex.glsl';
-import fragment from 'shaders/gallery-fragment.glsl';
+import vertex from 'shaders/plane-vertex.glsl';
+import fragment from 'shaders/plane-fragment.glsl';
 
 export default class Media {
   constructor({ element, index, scene, viewport, screen, geometry, template }) {
@@ -21,7 +21,7 @@ export default class Media {
     );
 
     this.scroll = 0;
-    this.pageScroll = 0;
+    this.pageScroll = this.template === 'project' ? screen.height * 0.33 : 0;
     this.extra = 0;
     this.speed = Number(element.getAttribute('data-speed'));
 
@@ -48,7 +48,7 @@ export default class Media {
       fragmentShader: fragment,
       vertexShader: vertex,
       transparent: true,
-      // wireframe: true,
+      wireframe: true,
       uniforms: {
         uTexture: { value: this.texture },
         uImageSizes: {
@@ -281,6 +281,8 @@ export default class Media {
    * Loop.
    */
   update({ pageScroll, scroll, infinite, velocity, direction, time }) {
+    if (!this.bounds) return;
+
     this.scroll = scroll;
 
     this.material.uniforms.uTime.value = time;

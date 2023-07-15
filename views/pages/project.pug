@@ -11,16 +11,16 @@ block content
           img.project__hero__img(src=project.data.main_img.url, alt="")
       .project__intro
         .project__intro__header 
-          span.project__intro__header__subtitle
+          span.project__intro__header__subtitle(data-animation="title" data-delay="0")
             span=project.data.brand_type
-          h1.project__intro__header__title
+          h1.project__intro__header__title(data-animation="title" data-delay="100")
             span=project.data.title
         .project__intro__content
-          .project__intro__content__text!=PrismicH.asHTML(project.data.description)
+          .project__intro__content__text(data-animation="paragraph" data-delay="100")!=PrismicH.asHTML(project.data.description)
         if project.data.awards.length > 0
           .project__intro__awards
-            each award in project.data.awards 
-              .project__intro__award 
+            each award, index in project.data.awards 
+              .project__intro__award(data-animation="paragraph" data-delay=`${100 * index + 200}`) 
                 img.project__intro__award__img(src=award.image.url, alt="")
       each gallery in project.data.body 
         section.project__gallery

@@ -85,7 +85,7 @@
   opacity: 0;
   mix-blend-mode: difference;
 
-  &.active {
+  &.active.visible {
     opacity: 1;
   }
 
@@ -93,7 +93,7 @@
     pointer-events: none;
   }
 
-  &.active a {
+  &.active.visible a {
     pointer-events: all;
   }
 }

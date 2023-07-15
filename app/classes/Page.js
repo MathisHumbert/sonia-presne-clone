@@ -4,12 +4,16 @@ import Prefix from 'prefix';
 import { clamp, each } from 'lodash';
 
 import detection from 'classes/Detection';
+import Title from 'animations/Title';
+import Paragraph from 'animations/Paragraph';
 
 export default class Page {
   constructor({ element, elements, id, isScrollable = true }) {
     this.selector = element;
     this.selectorChildren = {
       ...elements,
+      animationsTitles: '[data-animation="title"]',
+      animationsParagraphs: '[data-animation="paragraph"]',
     };
     this.id = id;
     this.isScrollable = isScrollable;
@@ -68,7 +72,25 @@ export default class Page {
     });
   }
 
-  createAnimations() {}
+  createAnimations() {
+    // Titles
+    if (this.elements.animationsTitles instanceof window.NodeList) {
+      each(this.elements.animationsTitles, (element) => {
+        return new Title({ element });
+      });
+    } else if (this.elements.animationsTitles !== null) {
+      new Title({ element: this.elements.animationsTitles });
+    }
+
+    // Paragraphs
+    if (this.elements.animationsParagraphs instanceof window.NodeList) {
+      each(this.elements.animationsParagraphs, (element) => {
+        return new Paragraph({ element });
+      });
+    } else if (this.elements.animationsParagraphs !== null) {
+      new Paragraph({ element: this.elements.animationsParagraphs });
+    }
+  }
 
   /**
    * Animations.
@@ -118,8 +140,13 @@ export default class Page {
       this.galleryStart =
         this.elements.wrapper.clientHeight - window.innerHeight * 1.33;
 
-      this.scroll.limit =
-        this.elements.wrapper.clientHeight - window.innerHeight;
+      if (this.scroll.limit !== 0 && this.scroll.limit === this.scroll.target) {
+        this.scroll.limit = this.scroll.target =
+          this.elements.wrapper.clientHeight - window.innerHeight;
+      } else {
+        this.scroll.limit =
+          this.elements.wrapper.clientHeight - window.innerHeight;
+      }
     }
   }
 
@@ -158,7 +185,7 @@ export default class Page {
    * Loop.
    */
   update() {
-    if (!this.isVisible || !this.isScrollable) return;
+    if (!this.isVisible) return;
 
     this.scroll.target = clamp(this.scroll.target, 0, this.scroll.limit);
 

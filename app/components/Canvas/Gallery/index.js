@@ -5,7 +5,6 @@ import { map, each, filter, findIndex } from 'lodash';
 import Media from './Media';
 import MediaDom from './MediaDom';
 import FooterDom from './FooterDom';
-import Logo from './Logo';
 
 export default class Gallery {
   constructor({ scene, viewport, screen, geometry, template, page }) {
@@ -108,16 +107,6 @@ export default class Gallery {
     );
   }
 
-  // createLogo() {
-  //   this.logo = new Logo({
-  //     element: this.logoElement,
-  //     scene: this.scene,
-  //     viewport: this.viewport,
-  //     screen: this.screen,
-  //     geometry: this.geometry,
-  //   });
-  // }
-
   /**
    * Animations.
    */
@@ -127,10 +116,6 @@ export default class Gallery {
         media.show();
       }
     });
-
-    // if (this.logo && this.logo.show) {
-    //   this.logo.show();
-    // }
   }
 
   hide() {
@@ -139,10 +124,6 @@ export default class Gallery {
         media.hide();
       }
     });
-
-    // if (this.logo && this.logo.hide) {
-    //   this.logo.hide();
-    // }
   }
 
   /**
@@ -193,6 +174,8 @@ export default class Gallery {
 
     this.clamp = gsap.utils.clamp(0, this.scroll.limit);
 
+    const galleryY = this.page.galleryStart - this.page.scroll.current;
+
     each(this.mediaElementsFiltered, (medialElement, index) => {
       if (medialElement && medialElement.onResize) {
         medialElement.onResize({
@@ -201,6 +184,7 @@ export default class Gallery {
           allMediaElementSizes: this.allMediaElementSizes,
           aboutMediaElementSizes: this.aboutMediaElementSizes,
           view: this.view,
+          galleryY,
           index,
         });
       }
@@ -214,13 +198,6 @@ export default class Gallery {
         });
       }
     });
-
-    // if (this.logo && this.logo.onResize) {
-    //   this.logo.onResize({
-    //     viewport,
-    //     screen,
-    //   });
-    // }
   }
 
   onTouchDown(event) {
@@ -474,7 +451,9 @@ export default class Gallery {
   onHomeToAbout() {
     this.template = 'about';
 
-    each(this.medias, (media) => (media.template = 'about'));
+    each(this.medias, (media) => {
+      media.template = 'about';
+    });
 
     this.scroll.current =
       this.scroll.target =
@@ -548,6 +527,32 @@ export default class Gallery {
     });
   }
 
+  onProjectToHome() {
+    this.template = 'home';
+
+    each(this.medias, (media) => {
+      media.template = 'home';
+      media.pageScroll = 0;
+    });
+
+    if (this.isScrollable && this.view === 'all') {
+      this.onShowMain();
+    } else {
+      // do something
+    }
+
+    each(this.mediaElements, (media) => {
+      media.view = 'main';
+      media.template = 'home';
+    });
+
+    gsap.delayedCall(1, () => {
+      this.isScrollable = true;
+      this.isAnimating = false;
+      this.view = 'main';
+    });
+  }
+
   onChangeIndex() {
     if (
       this.isAnimating ||
@@ -587,6 +592,7 @@ export default class Gallery {
 
         this.footerDom.show();
 
+        this.galleryElement.classList.add('active');
         this.headerLogoElement.classList.remove('active');
         gsap.delayedCall(0.5, () =>
           this.headerNavElement.classList.add('active')
@@ -601,6 +607,7 @@ export default class Gallery {
 
         this.footerDom.hide();
 
+        this.galleryElement.classList.remove('active');
         this.headerNavElement.classList.remove('active');
         gsap.delayedCall(0.5, () =>
           this.headerLogoElement.classList.add('active')
@@ -648,16 +655,28 @@ export default class Gallery {
       this.onChangeIndex();
     }
 
-    each(this.medias, (media) => {
-      if (media && media.update) {
-        media.update({
-          pageScroll: this.pageScroll,
-          scroll: this.scroll.current,
-          velocity: this.scroll.velocity,
-          time: this.time,
-        });
-      }
-    });
+    if (this.template === 'project') {
+      each(this.medias, (media) => {
+        if (media && media.update) {
+          media.update({
+            pageScroll: this.pageScroll,
+            scroll: this.scroll.current,
+            velocity: this.scroll.velocity,
+            time: this.time,
+          });
+        }
+      });
+    } else {
+      each(this.medias, (media) => {
+        if (media && media.update) {
+          media.update({
+            scroll: this.scroll.current,
+            velocity: this.scroll.velocity,
+            time: this.time,
+          });
+        }
+      });
+    }
 
     each(this.mediaElementsFiltered, (mediaElement) => {
       if (mediaElement && mediaElement.update) {

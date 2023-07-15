@@ -20,6 +20,7 @@ export default class Navigation extends Component {
 
   show() {
     this.elements.nav.classList.add('visible');
+    this.elements.logo.classList.add('visible');
   }
 
   onChange() {

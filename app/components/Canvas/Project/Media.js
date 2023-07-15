@@ -1,8 +1,8 @@
 import * as THREE from 'three';
 import { gsap } from 'gsap';
 
-import vertex from 'shaders/vertex.glsl';
-import fragment from 'shaders/fragment.glsl';
+import vertex from 'shaders/plane-vertex.glsl';
+import fragment from 'shaders/plane-fragment.glsl';
 
 export default class Media {
   constructor({ element, scene, viewport, screen, geometry }) {
@@ -13,6 +13,7 @@ export default class Media {
     this.geometry = geometry;
 
     this.isAnimated = false;
+    this.scroll = 0;
 
     this.createTexture();
     this.createMaterial();
@@ -45,7 +46,10 @@ export default class Media {
           ),
         },
         uPlaneSizes: { value: new THREE.Vector2(0, 0) },
-        uAlpha: { value: 0 },
+        uAlpha: { value: 1 },
+        uWind: { value: 10 },
+        uTime: { value: 0 },
+        uHover: { value: 1 },
       },
     });
   }
@@ -57,7 +61,14 @@ export default class Media {
   }
 
   createBounds() {
-    this.bounds = this.element.getBoundingClientRect();
+    const rect = this.element.getBoundingClientRect();
+
+    this.bounds = {
+      top: rect.top + this.scroll,
+      left: rect.left,
+      width: rect.width,
+      height: rect.height,
+    };
 
     this.updateScale();
     this.updateX();
@@ -121,7 +132,8 @@ export default class Media {
   animateIn() {
     this.isAnimated = true;
 
-    gsap.to(this.material.uniforms.uAlpha, { value: 1, duration: 1 });
+    gsap.to(this.material.uniforms.uWind, { value: 2 });
+    gsap.to(this.material.uniforms.uWind, { value: 0, delay: 0.5 });
   }
 
   /**
@@ -138,6 +150,7 @@ export default class Media {
    * Loop.
    */
   update({ scroll }) {
+    this.scroll = scroll;
     this.updateY(scroll);
   }
 }

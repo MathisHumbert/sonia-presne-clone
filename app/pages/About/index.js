@@ -22,13 +22,8 @@ export default class About extends Page {
 
   show() {
     this.elements.galleryItems.classList.add('visible');
-
     this.elements.logoTwo.classList.add('active');
     this.elements.logoOne.classList.remove('active');
-
-    gsap.to(this.elements.title, { opacity: 1, delay: 0.75 });
-    gsap.to(this.elements.contentText, { opacity: 1, delay: 1 });
-    gsap.to(this.elements.contentLink, { opacity: 1, delay: 1.2 });
 
     super.show();
   }

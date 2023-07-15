@@ -6,11 +6,11 @@ block variables
 block content
   .about
     .about__wrapper#wrapper
-      h1.about__title
+      h1.about__title(data-animation="title" data-delay="750")
         span=about.data.title
       .about__filler 
       .about__content
-        .about__content__text
+        .about__content__text(data-animation="paragraph" data-delay="1000")
           p=about.data.content_top
           p=about.data.content_bottom
-        a.about__content__link(href=about.data.mail_link.url)=about.data.mail_text 
+        a.about__content__link(href=about.data.mail_link.url data-animation="paragraph" data-delay="1200")=about.data.mail_text 
