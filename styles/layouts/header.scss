@@ -97,3 +97,19 @@
     pointer-events: all;
   }
 }
+
+.header__logo__progress {
+  svg {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 7rem;
+    height: 7rem;
+    stroke: #dfdab3;
+    stroke-width: 0.05rem;
+    opacity: 0.3;
+    stroke-dashoffset: 188.4px;
+    stroke-dasharray: 188.4px;
+  }
+}

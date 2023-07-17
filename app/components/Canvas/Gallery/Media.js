@@ -48,7 +48,7 @@ export default class Media {
       fragmentShader: fragment,
       vertexShader: vertex,
       transparent: true,
-      wireframe: true,
+      // wireframe: true,
       uniforms: {
         uTexture: { value: this.texture },
         uImageSizes: {

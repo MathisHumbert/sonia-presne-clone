@@ -150,6 +150,8 @@ export default class Canvas {
         this.gallery.onAboutToHome();
       } else if (this.template === 'project' && template === 'home') {
         this.gallery.onProjectToHome();
+      } else if (this.template === 'home' && template === 'project') {
+        this.gallery.onHomeToProject();
       }
     }
 

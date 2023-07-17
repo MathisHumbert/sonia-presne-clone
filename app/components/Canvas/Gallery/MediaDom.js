@@ -288,6 +288,37 @@ export default class MediaDom {
     }
   }
 
+  changeSizeFromProjectToHome({ startX }) {
+    gsap.set(this.element, {
+      scale: 1,
+      translateX: startX,
+      translateY: '-50%',
+      autoAlpha: 0,
+      onComplete: () => {
+        this.media.changeSize({
+          scroll: 0,
+          uAlpha: gsap.getProperty(this.element, 'autoAlpha'),
+        });
+      },
+    });
+
+    if (this.isMain) {
+      gsap.to(this.element, {
+        scale: 1,
+        translateX: this.width,
+        translateY: '-50%',
+        autoAlpha: 1,
+        duration: 1,
+        onUpdate: () => {
+          this.media.setSize({
+            scroll: 0,
+            uAlpha: gsap.getProperty(this.element, 'autoAlpha'),
+          });
+        },
+      });
+    }
+  }
+
   update({ scroll }) {
     this.scroll = scroll;
 

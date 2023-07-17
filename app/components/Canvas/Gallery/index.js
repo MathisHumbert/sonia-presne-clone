@@ -174,7 +174,7 @@ export default class Gallery {
 
     this.clamp = gsap.utils.clamp(0, this.scroll.limit);
 
-    const galleryY = this.page.galleryStart - this.page.scroll.current;
+    this.galleryY = this.page.galleryStart - this.page.scroll.current;
 
     each(this.mediaElementsFiltered, (medialElement, index) => {
       if (medialElement && medialElement.onResize) {
@@ -184,7 +184,7 @@ export default class Gallery {
           allMediaElementSizes: this.allMediaElementSizes,
           aboutMediaElementSizes: this.aboutMediaElementSizes,
           view: this.view,
-          galleryY,
+          galleryY: this.galleryY,
           index,
         });
       }
@@ -527,7 +527,49 @@ export default class Gallery {
     });
   }
 
+  onHomeToProject() {
+    this.isScrollable = false;
+    this.isAnimating = true;
+
+    this.template = 'project';
+    this.view = 'main';
+
+    this.galleryY = this.page.galleryStart;
+
+    this.scroll.current = this.scroll.target = this.scroll.last = 0;
+
+    each(this.mediaElements, (media) => {
+      media.view = 'main';
+      media.template = 'project';
+      media.scroll = 0;
+
+      // create custom code
+      media.onResize({
+        screen: this.screen,
+        mainMediaElementSizes: this.mainMediaElementSizes,
+        allMediaElementSizes: this.allMediaElementSizes,
+        aboutMediaElementSizes: this.aboutMediaElementSizes,
+        view: this.view,
+        galleryY: this.galleryY,
+        index: Number.isNaN(media.mainIndex) ? 15 : media.mainIndex,
+      });
+    });
+
+    each(this.medias, (media) => {
+      media.template = 'project';
+      media.scroll = 0;
+
+      media.onResize({ screen: this.screen, viewport: this.viewport });
+    });
+
+    gsap.delayedCall(1, () => {
+      this.isScrollable = false;
+      this.isAnimating = false;
+    });
+  }
+
   onProjectToHome() {
+    this.isAnimating = true;
     this.template = 'home';
 
     each(this.medias, (media) => {
@@ -537,8 +579,14 @@ export default class Gallery {
 
     if (this.isScrollable && this.view === 'all') {
       this.onShowMain();
-    } else {
-      // do something
+    } else if (!this.isScrollable) {
+      this.scroll.current = this.scroll.target = this.scroll.last = 0;
+
+      each(this.mediaElements, (element) => {
+        element.changeSizeFromProjectToHome({
+          startX: -this.mainMediaElementSizes.width / 2,
+        });
+      });
     }
 
     each(this.mediaElements, (media) => {

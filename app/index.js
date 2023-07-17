@@ -148,7 +148,9 @@ class App {
 
       this.page.create();
 
-      this.canvas.gallery.isAnimating = true;
+      if (this.canvas.gallery) {
+        this.canvas.gallery.isAnimating = true;
+      }
 
       this.createLoader();
 
