@@ -124,13 +124,27 @@ export default class Canvas {
       this.project.hide();
     }
 
-    if (template === 'home' && url.includes('project')) {
+    if (
+      (template === 'home' || template === 'project') &&
+      url.includes('project')
+    ) {
+      if (this.gallery.transitionElement === null) {
+        const projectName = url.split('projects/')[1];
+
+        this.gallery.transitionElement = this.gallery.medias.find(
+          (media) => media.name === projectName
+        );
+      }
+
       this.transition = new Transition({
         element: this.gallery.transitionElement,
         scene: this.scene,
         sizes: this.sizes,
         geometry: this.geometry,
-        destroyTransition: () => (this.transition = null),
+        destroyTransition: () => {
+          this.transition = null;
+          this.gallery.transitionElement = null;
+        },
       });
     }
   }
@@ -157,15 +171,26 @@ export default class Canvas {
     } else {
       this.gallery.page = page;
 
-      if (this.template === 'home' && template === 'about') {
-        this.gallery.onHomeToAbout();
+      if (
+        (this.template === 'home' || this.template === 'project') &&
+        template === 'about'
+      ) {
+        this.gallery.onPageToAbout();
       } else if (this.template === 'about' && template === 'home') {
         this.gallery.onAboutToHome();
       } else if (this.template === 'project' && template === 'home') {
         this.gallery.onProjectToHome();
-      } else if (this.template === 'home' && template === 'project') {
+      } else if (
+        (this.template === 'home' ||
+          this.template === 'project' ||
+          this.template === 'about') &&
+        template === 'project'
+      ) {
+        this.gallery.isAnimating = true;
+        this.gallery.isScrollable = false;
+
         gsap.delayedCall(1, () => {
-          this.gallery.onHomeToProject();
+          this.gallery.onPageToProject();
         });
       }
     }

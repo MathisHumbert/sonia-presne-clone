@@ -10,6 +10,7 @@ import Project from 'pages/Project';
 import Canvas from 'components/Canvas';
 import Preloader from 'components/Preloader';
 import Navigation from 'components/Navigation';
+import Cursor from 'components/Cursor';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -18,6 +19,7 @@ class App {
     this.createContent();
 
     this.createPages();
+    this.createCursor();
     this.createCanvas();
     this.createNavigation();
     this.createPreloader();
@@ -88,6 +90,10 @@ class App {
     });
 
     ScrollTrigger.defaults({ scroller: '#wrapper' });
+  }
+
+  createCursor() {
+    this.cursor = new Cursor();
   }
 
   /**
@@ -229,6 +235,10 @@ class App {
         scroll: this.page.scroll.current,
         pageScrollable: this.page.isScrollable,
       });
+    }
+
+    if (this.cursor && this.cursor.update) {
+      this.cursor.update();
     }
 
     window.requestAnimationFrame(this.update.bind(this));

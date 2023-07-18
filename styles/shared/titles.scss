@@ -5,6 +5,10 @@
   letter-spacing: 0.1em;
   text-transform: uppercase;
   font-weight: 500;
+
+  @include media('<=phone') {
+    font-size: 4rem;
+  }
 }
 
 %title-2 {
@@ -14,6 +18,10 @@
   text-transform: uppercase;
   letter-spacing: 0.14em;
   font-weight: 500;
+
+  @include media('<=phone') {
+    font-size: 2rem;
+  }
 }
 
 %title-3 {
@@ -23,4 +31,8 @@
   text-transform: uppercase;
   letter-spacing: 0.125em;
   font-weight: 400;
+
+  @include media('<=phone') {
+    font-size: 1.15rem;
+  }
 }

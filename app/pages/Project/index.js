@@ -14,7 +14,9 @@ export default class Project extends Page {
         headerProgress: '.header__logo__progress circle',
         space: '.project__space',
         gallery: '.gallery',
-        galleryItems: '.gallery__item',
+        galleryScroll: '.gallery__item',
+        galleryItems: '.gallery__items',
+        galleryFooter: '.gallery__footer',
       },
     });
   }
@@ -22,6 +24,8 @@ export default class Project extends Page {
   show() {
     this.elements.logoThree.classList.add('active');
     this.elements.logoOne.classList.remove('active');
+    this.elements.galleryItems.classList.add('visible');
+    this.elements.gallery.classList.remove('is-overview');
 
     gsap.fromTo(
       this.elements.logonOneSvg,
@@ -60,6 +64,8 @@ export default class Project extends Page {
   }
 
   hide() {
+    this.elements.galleryFooter.classList.remove('visible');
+
     super.hide();
   }
 }

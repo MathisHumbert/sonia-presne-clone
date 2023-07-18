@@ -5,12 +5,13 @@ import vertex from 'shaders/plane-vertex.glsl';
 import fragment from 'shaders/plane-fragment.glsl';
 
 export default class Media {
-  constructor({ element, scene, viewport, screen, geometry }) {
+  constructor({ element, index, scene, viewport, screen, geometry }) {
     this.element = element;
     this.scene = scene;
     this.viewport = viewport;
     this.screen = screen;
     this.geometry = geometry;
+    this.index = index;
 
     this.isAnimated = false;
     this.scroll = 0;
@@ -36,7 +37,6 @@ export default class Media {
       fragmentShader: fragment,
       vertexShader: vertex,
       transparent: true,
-      // wireframe: true,
       uniforms: {
         uTexture: { value: this.texture },
         uImageSizes: {
@@ -47,7 +47,7 @@ export default class Media {
         },
         uPlaneSizes: { value: new THREE.Vector2(0, 0) },
         uAlpha: { value: 0 },
-        uWind: { value: 10 },
+        uWind: { value: 0 },
         uTime: { value: 0 },
         uHover: { value: 1 },
       },
@@ -56,6 +56,10 @@ export default class Media {
 
   createMesh() {
     this.mesh = new THREE.Mesh(this.geometry, this.material);
+
+    if (this.index === 0) {
+      this.mesh.position.z += this.mesh.position.z + 0.02;
+    }
 
     this.scene.add(this.mesh);
   }
@@ -127,7 +131,10 @@ export default class Media {
       },
       { value: 1 }
     );
-    this.createObserver();
+
+    if (this.index !== 0) {
+      this.createObserver();
+    }
   }
 
   hide() {
@@ -139,7 +146,7 @@ export default class Media {
   animateIn() {
     this.isAnimated = true;
 
-    gsap.to(this.material.uniforms.uWind, { value: 2 });
+    gsap.to(this.material.uniforms.uWind, { value: 4 });
     gsap.to(this.material.uniforms.uWind, { value: 0, delay: 0.5 });
   }
 

@@ -21,9 +21,10 @@ export default class Project {
   createGallery() {
     this.medias = map(
       this.mediaElements,
-      (element) =>
+      (element, index) =>
         new Media({
-          element: element,
+          element,
+          index,
           scene: this.scene,
           viewport: this.viewport,
           screen: this.screen,

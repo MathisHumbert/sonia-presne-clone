@@ -9,7 +9,6 @@ export default class Home extends Page {
         wrapper: '.home__wrapper',
         logoOne: '.logo__one',
         logoOneSvg: '.logo__one svg',
-
         gallery: '.gallery',
         galleryItems: '.gallery__items',
         galleryFooter: '.gallery__footer',

@@ -29,6 +29,8 @@ export default class About extends Page {
   }
 
   hide() {
+    this.elements.logoTwo.classList.remove('active');
+
     gsap.to(
       [
         this.elements.title,

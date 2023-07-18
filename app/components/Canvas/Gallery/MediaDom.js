@@ -212,7 +212,7 @@ export default class MediaDom {
     }
   }
 
-  changeSizeFromHomeToAbout({ scroll, aboutMediaElementSizes }) {
+  changeSizeFromPageToAbout({ scroll, aboutMediaElementSizes }) {
     this.template = 'about';
 
     if (!this.aboutMediaElementSizes) {
@@ -319,7 +319,7 @@ export default class MediaDom {
     }
   }
 
-  changeSizeFromHomeToProject({ galleryY, endX }) {
+  changeSizeFromPageToProject({ galleryY, endX }) {
     this.view = 'main';
     this.template = 'project';
     this.scroll = 0;

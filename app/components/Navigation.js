@@ -28,7 +28,7 @@ export default class Navigation extends Component {
 
     if (url.includes('projects')) {
       this.elements.logo.classList.add('active');
-      this.elements.nav.classList.remove('active');
+      this.elements.nav.classList.remove('active', 'inverted');
 
       this.elements.navItems[0].classList.add('active');
       this.elements.navDot.style.transform = `translateX(${`-${

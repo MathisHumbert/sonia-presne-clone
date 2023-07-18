@@ -32,6 +32,7 @@ export default class Media {
     this.pageScroll = this.template === 'project' ? screen.height * 0.33 : 0;
     this.extra = 0;
     this.speed = Number(element.getAttribute('data-speed'));
+    this.name = element.getAttribute('data-name');
 
     this.createTexture();
     this.createMaterial();
@@ -77,7 +78,7 @@ export default class Media {
   createMesh() {
     this.mesh = new THREE.Mesh(this.geometry, this.material);
 
-    // this.mesh.position.z = this.mesh.position.z + 0.01;
+    this.mesh.position.z = this.mesh.position.z + 0.01;
 
     this.scene.add(this.mesh);
   }

@@ -8,6 +8,10 @@
   pointer-events: none;
   transition: opacity 1s ease-in-out;
 
+  @include media('<=phone') {
+    width: 90vw;
+  }
+
   svg,
   img {
     width: 100%;

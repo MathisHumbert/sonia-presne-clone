@@ -452,11 +452,13 @@ export default class Gallery {
     this.isAnimating = false;
   }
 
-  onHomeToAbout() {
+  onPageToAbout() {
     this.template = 'about';
 
     each(this.medias, (media) => {
       media.template = 'about';
+      media.extra = 0;
+      media.pageScroll = 0;
     });
 
     this.scroll.current =
@@ -477,13 +479,14 @@ export default class Gallery {
     };
 
     each(this.mediaElements, (element) =>
-      element.changeSizeFromHomeToAbout({
+      element.changeSizeFromPageToAbout({
         scroll: this.scroll.current,
         aboutMediaElementSizes: this.aboutMediaElementSizes,
       })
     );
 
     gsap.delayedCall(1, () => {
+      this.isScrollable = true;
       this.isAnimating = false;
     });
   }
@@ -494,6 +497,7 @@ export default class Gallery {
     each(this.medias, (media) => {
       media.template = 'home';
       media.extra = 0;
+      media.pageScroll = 0;
     });
 
     this.mediaElementsFiltered = filter(
@@ -531,12 +535,7 @@ export default class Gallery {
     });
   }
 
-  onHomeToProject() {
-    this.page.isScrollable = true;
-
-    this.isScrollable = false;
-    this.isAnimating = true;
-
+  onPageToProject() {
     this.template = 'project';
     this.view = 'main';
 
@@ -552,11 +551,12 @@ export default class Gallery {
     each(this.medias, (media) => {
       media.template = 'project';
       media.scroll = 0;
+      media.extra = 0;
       media.pageScroll = this.screen.height * 0.33;
     });
 
     each(this.mediaElements, (media) => {
-      media.changeSizeFromHomeToProject({
+      media.changeSizeFromPageToProject({
         galleryY: this.galleryY,
         endX:
           this.mainMediaElementSizes.total *
@@ -566,7 +566,7 @@ export default class Gallery {
     });
 
     gsap.delayedCall(1, () => {
-      this.isScrollable = false;
+      this.page.isScrollable = true;
       this.isAnimating = false;
     });
   }

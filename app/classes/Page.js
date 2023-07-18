@@ -207,8 +207,8 @@ export default class Page {
       ] = `translateY(-${this.scroll.current}px)`;
     }
 
-    if (this.elements.galleryItems) {
-      each(this.elements.galleryItems, (item) => {
+    if (this.elements.galleryScroll) {
+      each(this.elements.galleryScroll, (item) => {
         gsap.set(item, {
           translateY: this.galleryStart - this.scroll.current,
         });

@@ -1,5 +1,9 @@
 %page {
   @extend %cover;
+
+  opacity: 0;
+  visibility: hidden;
+  will-change: opacity, visibility;
 }
 
 %page__wrapper {

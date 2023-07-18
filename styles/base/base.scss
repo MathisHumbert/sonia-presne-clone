@@ -17,6 +17,14 @@ html {
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
   -webkit-text-size-adjust: none;
+
+  @include media('<=tablet') {
+    font-size: 1.30208vw;
+  }
+
+  @include media('<=phone') {
+    font-size: 2.08333vw;
+  }
 }
 
 body {
