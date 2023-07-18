@@ -1,8 +1,10 @@
 import * as THREE from 'three';
+import { gsap } from 'gsap';
 
 import Gallery from './Gallery';
 import Project from './Project';
 import About from './About';
+import Transition from './Transition';
 export default class Canvas {
   constructor({ template, page }) {
     this.template = template;
@@ -91,6 +93,7 @@ export default class Canvas {
       viewport: this.viewport,
       screen: this.screen,
       geometry: this.geometry,
+      transition: this.transition,
     });
   }
 
@@ -119,6 +122,16 @@ export default class Canvas {
 
     if (this.project) {
       this.project.hide();
+    }
+
+    if (template === 'home' && url.includes('project')) {
+      this.transition = new Transition({
+        element: this.gallery.transitionElement,
+        scene: this.scene,
+        sizes: this.sizes,
+        geometry: this.geometry,
+        destroyTransition: () => (this.transition = null),
+      });
     }
   }
 
@@ -151,7 +164,9 @@ export default class Canvas {
       } else if (this.template === 'project' && template === 'home') {
         this.gallery.onProjectToHome();
       } else if (this.template === 'home' && template === 'project') {
-        this.gallery.onHomeToProject();
+        gsap.delayedCall(1, () => {
+          this.gallery.onHomeToProject();
+        });
       }
     }
 

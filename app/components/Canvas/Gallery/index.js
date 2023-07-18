@@ -57,6 +57,7 @@ export default class Gallery {
     this.time = 0;
     this.isScrollable = this.template !== 'project';
     this.pageScroll = null;
+    this.transitionElement = null;
 
     this.transformPrefix = Prefix('transform');
 
@@ -103,6 +104,9 @@ export default class Gallery {
           screen: this.screen,
           geometry: this.geometry,
           template: this.template,
+          onClick: (element) => {
+            this.transitionElement = element;
+          },
         })
     );
   }
@@ -528,6 +532,8 @@ export default class Gallery {
   }
 
   onHomeToProject() {
+    this.page.isScrollable = true;
+
     this.isScrollable = false;
     this.isAnimating = true;
 
@@ -536,30 +542,27 @@ export default class Gallery {
 
     this.galleryY = this.page.galleryStart;
 
+    this.mediaElementsFiltered = filter(
+      this.mediaElements,
+      (item) => item.isMain === true
+    );
+
     this.scroll.current = this.scroll.target = this.scroll.last = 0;
-
-    each(this.mediaElements, (media) => {
-      media.view = 'main';
-      media.template = 'project';
-      media.scroll = 0;
-
-      // create custom code
-      media.onResize({
-        screen: this.screen,
-        mainMediaElementSizes: this.mainMediaElementSizes,
-        allMediaElementSizes: this.allMediaElementSizes,
-        aboutMediaElementSizes: this.aboutMediaElementSizes,
-        view: this.view,
-        galleryY: this.galleryY,
-        index: Number.isNaN(media.mainIndex) ? 15 : media.mainIndex,
-      });
-    });
 
     each(this.medias, (media) => {
       media.template = 'project';
       media.scroll = 0;
+      media.pageScroll = this.screen.height * 0.33;
+    });
 
-      media.onResize({ screen: this.screen, viewport: this.viewport });
+    each(this.mediaElements, (media) => {
+      media.changeSizeFromHomeToProject({
+        galleryY: this.galleryY,
+        endX:
+          this.mainMediaElementSizes.total *
+            (this.mediaElementsFiltered.length - 1) -
+          this.mainMediaElementSizes.width / 2,
+      });
     });
 
     gsap.delayedCall(1, () => {

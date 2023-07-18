@@ -319,6 +319,45 @@ export default class MediaDom {
     }
   }
 
+  changeSizeFromHomeToProject({ galleryY, endX }) {
+    this.view = 'main';
+    this.template = 'project';
+    this.scroll = 0;
+
+    if (this.isMain) {
+      this.width =
+        (this.mainMediaElementSizes.width + this.mainMediaElementSizes.margin) *
+          this.mainIndex -
+        this.mainMediaElementSizes.width / 2;
+
+      gsap.set(this.element, {
+        scale: 1,
+        translateX: this.width,
+        translateY: galleryY,
+        autoAlpha: 1,
+        onComplete: () => {
+          this.media.setSize({
+            scroll: 0,
+            uAlpha: gsap.getProperty(this.element, 'autoAlpha'),
+          });
+        },
+      });
+    } else {
+      gsap.set(this.element, {
+        scale: 1,
+        translateX: endX,
+        translateY: galleryY,
+        autoAlpha: 0,
+        onComplete: () => {
+          this.media.setSize({
+            scroll: 0,
+            uAlpha: gsap.getProperty(this.element, 'autoAlpha'),
+          });
+        },
+      });
+    }
+  }
+
   update({ scroll }) {
     this.scroll = scroll;
 

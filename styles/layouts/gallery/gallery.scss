@@ -53,6 +53,10 @@
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.5s cubic-bezier(0.85, 0, 0.3, 1);
+
+  a {
+    display: block;
+  }
 }
 
 .is-overview {

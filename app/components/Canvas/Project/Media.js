@@ -46,7 +46,7 @@ export default class Media {
           ),
         },
         uPlaneSizes: { value: new THREE.Vector2(0, 0) },
-        uAlpha: { value: 1 },
+        uAlpha: { value: 0 },
         uWind: { value: 10 },
         uTime: { value: 0 },
         uHover: { value: 1 },
@@ -120,6 +120,13 @@ export default class Media {
    * Animations.
    */
   show() {
+    gsap.fromTo(
+      this.material.uniforms.uAlpha,
+      {
+        value: 0,
+      },
+      { value: 1 }
+    );
     this.createObserver();
   }
 

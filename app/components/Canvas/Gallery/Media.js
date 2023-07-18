@@ -5,7 +5,16 @@ import vertex from 'shaders/plane-vertex.glsl';
 import fragment from 'shaders/plane-fragment.glsl';
 
 export default class Media {
-  constructor({ element, index, scene, viewport, screen, geometry, template }) {
+  constructor({
+    element,
+    index,
+    scene,
+    viewport,
+    screen,
+    geometry,
+    template,
+    onClick,
+  }) {
     this.element = element;
     this.index = index;
     this.scene = scene;
@@ -13,12 +22,11 @@ export default class Media {
     this.screen = screen;
     this.geometry = geometry;
     this.template = template;
+    this.onClick = onClick;
 
     this.titleElement = element.querySelector('.gallery__title');
     this.categoryElement = element.querySelector('.gallery__category');
-    this.mediaWrapperElement = element.querySelector(
-      '.gallery__media__wrapper'
-    );
+    this.mediaElement = element.querySelector('.gallery__media');
 
     this.scroll = 0;
     this.pageScroll = this.template === 'project' ? screen.height * 0.33 : 0;
@@ -69,7 +77,7 @@ export default class Media {
   createMesh() {
     this.mesh = new THREE.Mesh(this.geometry, this.material);
 
-    this.mesh.position.z += this.mesh.position.z + 0.01;
+    // this.mesh.position.z = this.mesh.position.z + 0.01;
 
     this.scene.add(this.mesh);
   }
@@ -160,6 +168,10 @@ export default class Media {
       value: 1,
       ease: 'linear',
     });
+  }
+
+  onMouseClick() {
+    this.onClick(this);
   }
 
   setSize({ scroll, uAlpha }) {
@@ -254,11 +266,13 @@ export default class Media {
       'mouseenter',
       this.onMouseEnter.bind(this)
     );
+
     this.titleElement.addEventListener(
       'mouseenter',
       this.onMouseEnter.bind(this)
     );
-    this.mediaWrapperElement.addEventListener(
+
+    this.mediaElement.addEventListener(
       'mouseenter',
       this.onMouseEnter.bind(this)
     );
@@ -267,14 +281,25 @@ export default class Media {
       'mouseleave',
       this.onMouseLeave.bind(this)
     );
+
     this.titleElement.addEventListener(
       'mouseleave',
       this.onMouseLeave.bind(this)
     );
-    this.mediaWrapperElement.addEventListener(
+
+    this.mediaElement.addEventListener(
       'mouseleave',
       this.onMouseLeave.bind(this)
     );
+
+    this.categoryElement.addEventListener(
+      'click',
+      this.onMouseClick.bind(this)
+    );
+
+    this.titleElement.addEventListener('click', this.onMouseClick.bind(this));
+
+    this.mediaElement.addEventListener('click', this.onMouseClick.bind(this));
   }
 
   /**
