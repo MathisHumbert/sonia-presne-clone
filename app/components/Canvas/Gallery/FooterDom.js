@@ -4,7 +4,7 @@ import each from 'lodash/each';
 import Component from 'classes/Component';
 
 export default class FooterDom extends Component {
-  constructor({ onButtonViewClick, onButtonFilterClick }) {
+  constructor({ onButtonViewClick, onButtonFilterClick, cursor }) {
     super({
       element: '.gallery__footer',
       elements: {
@@ -19,6 +19,7 @@ export default class FooterDom extends Component {
 
     this.onButtonViewClick = onButtonViewClick;
     this.onButtonFilterClick = onButtonFilterClick;
+    this.cursor = cursor;
 
     this.isFilterOpen = false;
 
@@ -119,6 +120,14 @@ export default class FooterDom extends Component {
   addEventListeners() {
     this.elements.buttonView.addEventListener('click', () =>
       this.onButtonViewClick()
+    );
+
+    this.elements.buttonView.addEventListener('mouseenter', () =>
+      this.cursor.onEnter()
+    );
+
+    this.elements.buttonView.addEventListener('mouseleave', () =>
+      this.cursor.onLeave()
     );
 
     each(this.elements.filterItems, (element, index) => {

@@ -7,11 +7,12 @@ import MediaDom from './MediaDom';
 import FooterDom from './FooterDom';
 
 export default class Gallery {
-  constructor({ scene, viewport, screen, geometry, template, page }) {
+  constructor({ scene, viewport, screen, geometry, cursor, template, page }) {
     this.scene = scene;
     this.viewport = viewport;
     this.screen = screen;
     this.geometry = geometry;
+    this.cursor = cursor;
     this.template = template;
     this.page = page;
 
@@ -70,6 +71,7 @@ export default class Gallery {
     this.footerDom = new FooterDom({
       onButtonViewClick: this.onViewClick.bind(this),
       onButtonFilterClick: this.onFilterClick.bind(this),
+      cursor,
     });
   }
 
@@ -104,6 +106,7 @@ export default class Gallery {
           screen: this.screen,
           geometry: this.geometry,
           template: this.template,
+          cursor: this.cursor,
           onClick: (element) => {
             this.transitionElement = element;
           },

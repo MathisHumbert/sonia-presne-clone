@@ -2,6 +2,7 @@ import each from 'lodash/each';
 import normalizeWheel from 'normalize-wheel';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/all';
+import FontFaceObserver from 'fontfaceobserver';
 
 import Home from 'pages/Home';
 import About from 'pages/About';
@@ -18,8 +19,8 @@ class App {
   constructor() {
     this.createContent();
 
-    this.createPages();
     this.createCursor();
+    this.createPages();
     this.createCanvas();
     this.createNavigation();
     this.createPreloader();
@@ -41,7 +42,7 @@ class App {
   createPages() {
     this.pages = {
       home: new Home(),
-      about: new About(),
+      about: new About({ cursor: this.cursor }),
       project: new Project(),
     };
 
@@ -52,12 +53,20 @@ class App {
     this.page.create(true);
   }
 
+  createCursor() {
+    this.cursor = new Cursor();
+  }
+
   createCanvas() {
-    this.canvas = new Canvas({ template: this.template, page: this.page });
+    this.canvas = new Canvas({
+      template: this.template,
+      page: this.page,
+      cursor: this.cursor,
+    });
   }
 
   createNavigation() {
-    this.navigation = new Navigation();
+    this.navigation = new Navigation({ cursor: this.cursor });
   }
 
   createPreloader() {
@@ -90,10 +99,6 @@ class App {
     });
 
     ScrollTrigger.defaults({ scroller: '#wrapper' });
-  }
-
-  createCursor() {
-    this.cursor = new Cursor();
   }
 
   /**
@@ -289,4 +294,13 @@ class App {
   }
 }
 
-new App();
+const fontHind = new FontFaceObserver('Hind');
+const fontAudrey = new FontFaceObserver('Audrey');
+
+Promise.all([fontHind.load(), fontAudrey.load()])
+  .then(() => {
+    new App();
+  })
+  .catch(() => {
+    new App();
+  });

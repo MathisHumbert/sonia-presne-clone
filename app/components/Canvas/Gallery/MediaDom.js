@@ -11,7 +11,6 @@ export default class MediaDom {
     this.mainIndex = Number(element.getAttribute('data-main-index'));
     this.isMain = element.getAttribute('data-main') === 'true';
     this.category = element.getAttribute('data-category');
-    this.wrapperElement = document.getElementById('wrapper');
 
     this.scroll = 0;
 

@@ -13,6 +13,7 @@ export default class Media {
     screen,
     geometry,
     template,
+    cursor,
     onClick,
   }) {
     this.element = element;
@@ -22,6 +23,7 @@ export default class Media {
     this.screen = screen;
     this.geometry = geometry;
     this.template = template;
+    this.cursor = cursor;
     this.onClick = onClick;
 
     this.titleElement = element.querySelector('.gallery__title');
@@ -38,7 +40,7 @@ export default class Media {
     this.createMaterial();
     this.createMesh();
 
-    this.addEventListeners();
+    this.addEventsListeners();
   }
 
   /**
@@ -162,6 +164,8 @@ export default class Media {
       value: 2,
       ease: 'linear',
     });
+
+    this.cursor.onEnter();
   }
 
   onMouseLeave() {
@@ -169,6 +173,8 @@ export default class Media {
       value: 1,
       ease: 'linear',
     });
+
+    this.cursor.onLeave();
   }
 
   onMouseClick() {
@@ -262,7 +268,7 @@ export default class Media {
   /**
    * Listeners.
    */
-  addEventListeners() {
+  addEventsListeners() {
     this.categoryElement.addEventListener(
       'mouseenter',
       this.onMouseEnter.bind(this)

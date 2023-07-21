@@ -4,7 +4,7 @@ import { gsap } from 'gsap';
 import Component from 'classes/Component';
 
 export default class Navigation extends Component {
-  constructor() {
+  constructor({ cursor }) {
     super({
       element: '.header',
       elements: {
@@ -15,7 +15,10 @@ export default class Navigation extends Component {
       },
     });
 
+    this.cursor = cursor;
+
     this.onChange();
+    this.addEventsListeners();
   }
 
   show() {
@@ -61,6 +64,22 @@ export default class Navigation extends Component {
         }
       });
     }
+  }
+
+  addEventsListeners() {
+    each(this.elements.navItems, (element) => {
+      element.addEventListener('mouseenter', () => this.cursor.onEnter());
+
+      element.addEventListener('mouseleave', () => this.cursor.onLeave());
+    });
+
+    this.elements.logo.addEventListener('mouseenter', () =>
+      this.cursor.onEnter()
+    );
+
+    this.elements.logo.addEventListener('mouseleave', () =>
+      this.cursor.onLeave()
+    );
   }
 
   onResize() {

@@ -40,10 +40,18 @@ export default class Preloader {
 
     Promise.all([loadImages, loadTextures]).then(() => {
       this.logoOne.classList.add('active');
-      gsap.fromTo('.logo__one', { scale: 1.5 }, { scale: 1, duration: 1 });
-      gsap.delayedCall(1, () => {
-        onLoaded();
-      });
+
+      gsap.fromTo(
+        '.logo__one',
+        { scale: 1.5 },
+        {
+          scale: 1,
+          duration: 1,
+          onComplete: () => {
+            onLoaded();
+          },
+        }
+      );
     });
   }
 

@@ -5,6 +5,7 @@
   user-select: none;
   -webkit-user-drag: none;
   -webkit-app-region: no-drag;
+  cursor: none;
 }
 
 html {
@@ -13,9 +14,9 @@ html {
   position: fixed;
   overflow: hidden;
   font-size: 0.78125vw;
+  text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
   -webkit-text-size-adjust: none;
 
   @include media('<=tablet') {

@@ -6,9 +6,10 @@ import Project from './Project';
 import About from './About';
 import Transition from './Transition';
 export default class Canvas {
-  constructor({ template, page }) {
+  constructor({ template, page, cursor }) {
     this.template = template;
     this.page = page;
+    this.cursor = cursor;
 
     this.createScene();
     this.createCamera();
@@ -60,6 +61,7 @@ export default class Canvas {
       viewport: this.viewport,
       screen: this.screen,
       geometry: this.geometry,
+      cursor: this.cursor,
       template,
       page,
     });
